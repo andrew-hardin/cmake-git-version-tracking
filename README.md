@@ -3,7 +3,7 @@ This is a demo project that shows how to embed up-to-date
 versioning information into a C/C++ application via CMake.
 
 ## A "why does this matter" use case
-We're continuiously shipping prebuild binaries for an
+We're continuously shipping prebuild binaries for an
 application. A user discovers a bug and files a bug report.
 By embedding up-to-date versioning information, the user
 can include this in their report, e.g.:
@@ -44,3 +44,24 @@ reconfigure the header and CMake rebuilds any downstream dependencies.
 4. Build it again- note that nothing is recompiled (sweet!).
 5. Edit README.md, then build and run the demo- note that the demo now reports that the HEAD is dirty.
 6. Commit something, then build and run the demo- note that the SHA1 has changed.
+
+## Tip: how to avoid unnecessary recompilations
+If you're worred about lengthy recompilations, then **don't** place the
+versioning information in a header that is then included in _every_ source
+file. Doing so would defeat the purpose of partial rebuilds.
+I shudder to think of how much time would be wasted.
+
+As an alternative, place the versioning information in a source file:
+
+```
+// In git.h
+extern const std::string kGitSHA7;
+
+// In git.cc.in
+const std::string kGitSHA = "@GIT_SHA1@";
+
+// CMake then takes git.cc.in and creates git.cc
+const std::string kGitSHA = "1234567";
+```
+
+Thus, only `git.cc` need to be recompiled whenever a commit is made.
