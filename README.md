@@ -46,7 +46,7 @@ reconfigure the header and CMake rebuilds any downstream dependencies.
 6. Commit something, then build and run the demo- note that the SHA1 has changed.
 
 ## Tip: how to avoid unnecessary recompilations
-If you're worred about lengthy recompilations, then **don't** place the
+If you're worried about lengthy recompilations, then **don't** place the
 versioning information in a header that is then included in _every_ source
 file. Doing so would defeat the purpose of partial rebuilds.
 I shudder to think of how much time would be wasted.
