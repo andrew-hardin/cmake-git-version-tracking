@@ -1,8 +1,8 @@
 # git_watcher.cmake
 #
-# This file defines the functions and targets needed to keep a
-# watch on the state of the git repo. If the state changes, a
-# header is reconfigured.
+# This file defines the functions and targets needed to monitor
+# the state of a git repo. If the state changes (e.g. a commit is added),
+# then a header gets reconfigured.
 #
 # Customization tip:
 #   - You should only need to edit the paths to the pre and
