@@ -14,11 +14,11 @@
 #     with a Main() function. I wanted to keep it compact to
 #     simplify "copy + paste" usage.
 #
-#   - This script is made to operate in two scopes:
-#       1. Configure time scope (when build files are created).
-#       2. Build time scope (called via CMake -P)
+#   - This script is made to operate in two CMake contexts:
+#       1. Configure time context (when build files are created).
+#       2. Build time context (called via CMake -P)
 #     If you see something odd (e.g. the NOT DEFINED clauses),
-#     consider that it can run in one of two scopes.
+#     consider that it can run in one of two contexts.
 
 if(NOT DEFINED post_configure_file)
     set(post_configure_file "${CMAKE_CURRENT_SOURCE_DIR}/git.h")
