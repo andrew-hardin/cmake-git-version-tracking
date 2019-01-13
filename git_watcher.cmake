@@ -150,7 +150,7 @@ function(MonitorGit)
         BYPRODUCTS ${post_configure_file}
         COMMAND
             ${CMAKE_COMMAND}
-            -DGIT_FUNCTION=DoMonitoring
+            -D_BUILD_TIME_CHECK_GIT=TRUE
             -DGIT_WORKING_DIR=${CMAKE_CURRENT_SOURCE_DIR}
             -Dpre_configure_file=${pre_configure_file}
             -Dpost_configure_file=${post_configure_file}
@@ -192,7 +192,7 @@ endfunction()
 # Description: primary entry-point to the script. Functions are selected based
 #              on the GIT_FUNCTION variable.
 function(Main)
-    if(GIT_FUNCTION STREQUAL DoMonitoring)
+    if(_BUILD_TIME_CHECK_GIT)
         # Check if the repo has changed.
         # If so, run the change action.
         CheckGit("${GIT_WORKING_DIR}" changed)
@@ -203,6 +203,7 @@ function(Main)
             message(STATUS "Checking git... no change.")
         endif()
     else()
+        # >> Executes at configure time.
         # Start monitoring git.
         # This should only ever be run once when the module is imported.
         # Behind the scenes, all this does is setup a custom target.
