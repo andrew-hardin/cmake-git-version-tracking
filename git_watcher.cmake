@@ -13,7 +13,7 @@
 #   - This script was designed similar to a Python application
 #     with a Main() function. I wanted to keep it compact to
 #     simplify "copy + paste" usage.
-# 
+#
 #   - This script is made to operate in two scopes:
 #       1. Configure time scope (when build files are created).
 #       2. Build time scope (called via CMake -P)
@@ -62,60 +62,60 @@ endfunction()
 #   _working_dir (in)  string; the directory from which git commands will be ran.
 #   _hashvar     (out) string; the SHA1 hash for HEAD.
 #   _dirty       (out) boolean; whether or not there are uncommitted changes.
-#   _success     (out) boolean; whether or not both 
+#   _success     (out) boolean; whether or not both
 function(GetGitState _working_dir _hashvar _dirty _success)
 
-	# Initialize our returns.
-	set(${_hashvar} "GIT-NOTFOUND" PARENT_SCOPE)
-	set(${_dirty} "false" PARENT_SCOPE)
-	set(${_success} "false" PARENT_SCOPE)
+    # Initialize our returns.
+    set(${_hashvar} "GIT-NOTFOUND" PARENT_SCOPE)
+    set(${_dirty} "false" PARENT_SCOPE)
+    set(${_success} "false" PARENT_SCOPE)
 
-	# Find git.
-	if(NOT GIT_FOUND)
-		find_package(Git QUIET)
-	endif()
-	if(NOT GIT_FOUND)
-		return()
-	endif()
+    # Find git.
+    if(NOT GIT_FOUND)
+        find_package(Git QUIET)
+    endif()
+    if(NOT GIT_FOUND)
+        return()
+    endif()
 
-	# Get the hash for HEAD.
-	execute_process(COMMAND
-		"${GIT_EXECUTABLE}" rev-parse --verify HEAD
-		WORKING_DIRECTORY "${_working_dir}"
-		RESULT_VARIABLE res
-		OUTPUT_VARIABLE hash
-		ERROR_QUIET
-		OUTPUT_STRIP_TRAILING_WHITESPACE)
-	if(NOT res EQUAL 0)
+    # Get the hash for HEAD.
+    execute_process(COMMAND
+        "${GIT_EXECUTABLE}" rev-parse --verify HEAD
+        WORKING_DIRECTORY "${_working_dir}"
+        RESULT_VARIABLE res
+        OUTPUT_VARIABLE hash
+        ERROR_QUIET
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+    if(NOT res EQUAL 0)
         # The git command failed.
-		return()
-	endif()
+        return()
+    endif()
 
     # Record the SHA1 hash for HEAD.
     set(${_hashvar} "${hash}" PARENT_SCOPE)
 
-	# Get whether or not the working tree is dirty.
-	execute_process(COMMAND
-		"${GIT_EXECUTABLE}" status --porcelain
-		WORKING_DIRECTORY "${_working_dir}"
-		RESULT_VARIABLE res
-		OUTPUT_VARIABLE out
-		ERROR_QUIET
-		OUTPUT_STRIP_TRAILING_WHITESPACE)
-	if(NOT res EQUAL 0)
-		# The git command failed.
-		return()
-	endif()
+    # Get whether or not the working tree is dirty.
+    execute_process(COMMAND
+        "${GIT_EXECUTABLE}" status --porcelain
+        WORKING_DIRECTORY "${_working_dir}"
+        RESULT_VARIABLE res
+        OUTPUT_VARIABLE out
+        ERROR_QUIET
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+    if(NOT res EQUAL 0)
+        # The git command failed.
+        return()
+    endif()
 
-	# If there were uncommitted changes, mark it as dirty.
-	if (NOT "${out}" STREQUAL "")
-		set(${_dirty} "true" PARENT_SCOPE)
-	else()
-		set(${_dirty} "false" PARENT_SCOPE)
-	endif()
+    # If there were uncommitted changes, mark it as dirty.
+    if (NOT "${out}" STREQUAL "")
+        set(${_dirty} "true" PARENT_SCOPE)
+    else()
+        set(${_dirty} "false" PARENT_SCOPE)
+    endif()
 
     # We got this far, so git must have cooperated.
-	set(${_success} "true" PARENT_SCOPE)
+    set(${_success} "true" PARENT_SCOPE)
 endfunction()
 
 
@@ -148,7 +148,7 @@ function(MonitorGit)
     add_custom_target(AlwaysCheckGit
         DEPENDS ${pre_configure_file}
         BYPRODUCTS ${post_configure_file}
-        COMMAND 
+        COMMAND
             ${CMAKE_COMMAND}
             -DGIT_FUNCTION=DoMonitoring
             -DGIT_WORKING_DIR=${CMAKE_CURRENT_SOURCE_DIR}

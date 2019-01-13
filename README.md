@@ -22,7 +22,7 @@ searched far and wide for existing solutions. Each solution I found fell
 into one of two categories:
 
 - Write the commit ID to the header at configure time (e.g. `cmake <source_dir>`).
-  This was a poor solution- any changes (e.g. `git commit -am "Changed X"`) 
+  This was a poor solution- any changes (e.g. `git commit -am "Changed X"`)
   aren't reflected in the header.
 
 - Every time a build is started (e.g. `make`), write the commit ID to a header.
