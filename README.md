@@ -3,7 +3,7 @@ This is a demo project that shows how to embed up-to-date
 versioning information into a C/C++ application via CMake.
 
 ## A "why does this matter" use case
-We're continuously shipping prebuild binaries for an
+We're continuously shipping prebuilt binaries for an
 application. A user discovers a bug and files a bug report.
 By embedding up-to-date versioning information, the user
 can include this in their report, e.g.:
@@ -22,8 +22,9 @@ searched far and wide for existing solutions. Each solution I found fell
 into one of two categories:
 
 - Write the commit ID to the header at configure time (e.g. `cmake <source_dir>`).
-  This was a poor solution- any changes (e.g. `git commit -am "Changed X"`)
-  aren't reflected in the header.
+  This works well for automated build processes (e.g. check-in code and build artifacts).
+  However, it has one weakness: any changes made after running `cmake`
+  (e.g. `git commit -am "Changed X"`) aren't reflected in the header.
 
 - Every time a build is started (e.g. `make`), write the commit ID to a header.
   While this was better than the above, it had one major drawback:
@@ -41,7 +42,7 @@ reconfigure the header and CMake rebuilds any downstream dependencies.
 2. Configure the project (`mkdir build && cd build && cmake ..`).
 3. Build it (`make`).
 3. Run `./demo`- note the SHA1.
-4. Build it again- note that nothing is recompiled (sweet!).
+4. Build it again (`make`)- note that nothing is recompiled (sweet!).
 5. Edit README.md, then build and run the demo- note that the demo now reports that the HEAD is dirty.
 6. Commit something, then build and run the demo- note that the SHA1 has changed.
 
@@ -64,4 +65,4 @@ const std::string kGitSHA = "@GIT_SHA1@";
 const std::string kGitSHA = "1234567";
 ```
 
-Thus, only `git.cc` need to be recompiled whenever a commit is made.
+Thus, only the `git.cc` source file needs to be recompiled whenever a commit is made.

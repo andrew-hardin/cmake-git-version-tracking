@@ -1,13 +1,28 @@
 # git_watcher.cmake
 #
 # This file defines the functions and targets needed to monitor
-# the state of a git repo. If the state changes (e.g. a commit is added),
-# then a header gets reconfigured.
+# the state of a git repo. If the state changes (e.g. a commit is made),
+# then a file gets reconfigured.
 #
-# Customization tip:
-#   - You should only need to edit the paths to the pre and
-#     post configure file. The rest should be plug-and-play.
-#     See below for where those variables are defined.
+# The behavior of this script can be modified by defining any of these variables:
+#
+#   PRE_CONFIGURE_FILE (REQUIRED)
+#   -- The path to the file that'll be configured.
+#
+#   POST_CONFIGURE_FILE (REQUIRED)
+#   -- The path to the configured PRE_CONFIGURE_FILE.
+#
+#   GIT_STATE_FILE (OPTIONAL)
+#   -- The path to the file used to store the previous build's git state.
+#      Defaults to the current binary directory.
+#
+#   GIT_WORKING_DIR (OPTIONAL)
+#   -- The directory from which git commands will be run.
+#      Defaults to the directory with the top level CMakeLists.txt.
+#
+#   GIT_EXECUTABLE (OPTIONAL)
+#   -- The path to the git executable. It'll automatically be set if the
+#      user doesn't supply a path.
 #
 # Script design:
 #   - This script was designed similar to a Python application
@@ -20,79 +35,75 @@
 #     If you see something odd (e.g. the NOT DEFINED clauses),
 #     consider that it can run in one of two contexts.
 
-if(NOT DEFINED post_configure_file)
-    set(post_configure_file "${CMAKE_CURRENT_SOURCE_DIR}/git.h")
-endif()
-if(NOT DEFINED pre_configure_file)
-    set(pre_configure_file "${post_configure_file}.in")
-endif()
-if(NOT EXISTS "${pre_configure_file}")
-    message(FATAL_ERROR "Runtime error: the preconfigure file doesn't exist.")
-endif()
+# Short hand for converting paths to absolute.
+macro(PATH_TO_ABSOLUTE var_name)
+    get_filename_component(${var_name} "${${var_name}}" ABSOLUTE)
+endmacro()
 
+# Check that a required variable is set.
+macro(CHECK_REQUIRED_VARIABLE var_name)
+    if(NOT DEFINED ${var_name})
+        message(FATAL_ERROR "The \"${var_name}\" variable must be defined.")
+    endif()
+    PATH_TO_ABSOLUTE(${var_name})
+endmacro()
 
-# This variable describes where we record the state of the git repo.
-set(git_state_file "${CMAKE_CURRENT_BINARY_DIR}/git-state")
+# Check that an optional variable is set, or, set it to a default value.
+macro(CHECK_OPTIONAL_VARIABLE var_name default_value)
+    if(NOT DEFINED ${var_name})
+        set(${var_name} ${default_value})
+    endif()
+    PATH_TO_ABSOLUTE(${var_name})
+endmacro()
+
+CHECK_REQUIRED_VARIABLE(PRE_CONFIGURE_FILE)
+CHECK_REQUIRED_VARIABLE(POST_CONFIGURE_FILE)
+CHECK_OPTIONAL_VARIABLE(GIT_STATE_FILE "${CMAKE_BINARY_DIR}/git-state")
+CHECK_OPTIONAL_VARIABLE(GIT_WORKING_DIR "${CMAKE_SOURCE_DIR}")
+
+# Check the optional git variable.
+# If it's not set, we'll try to find it using the CMake packaging system.
+if(NOT DEFINED GIT_EXECUTABLE)
+    find_package(Git QUIET REQUIRED)
+endif()
+CHECK_REQUIRED_VARIABLE(GIT_EXECUTABLE)
 
 
 
 # Function: GitStateChangedAction
-# Description: this action is executed when the state of the git
+# Description: this function is executed when the state of the git
 #              repo changes (e.g. a commit is made).
-function(GitStateChangedAction)
-    # Read the git state file
-    file(STRINGS "${git_state_file}" CONTENT)
-    LIST(GET CONTENT 0 HELP_STRING)
-    LIST(GET CONTENT 1 GIT_RETRIEVED_STATE)
-    LIST(GET CONTENT 2 GIT_HEAD_SHA1)
-    LIST(GET CONTENT 3 GIT_IS_DIRTY)
-    # Configure the file.
-    configure_file("${pre_configure_file}" "${post_configure_file}" @ONLY)
+function(GitStateChangedAction _state_as_list)
+    # Set variables by index, then configure the file w/ these variables defined.
+    LIST(GET _state_as_list 0 GIT_RETRIEVED_STATE)
+    LIST(GET _state_as_list 1 GIT_HEAD_SHA1)
+    LIST(GET _state_as_list 2 GIT_IS_DIRTY)
+    configure_file("${PRE_CONFIGURE_FILE}" "${POST_CONFIGURE_FILE}" @ONLY)
 endfunction()
 
-
-###################################################
-# There be dragons below here...                  #
-###################################################
 
 
 # Function: GetGitState
 # Description: gets the current state of the git repo.
 # Args:
-#   _working_dir (in)  string; the directory from which git commands will be ran.
-#   _hashvar     (out) string; the SHA1 hash for HEAD.
-#   _dirty       (out) boolean; whether or not there are uncommitted changes.
-#   _success     (out) boolean; whether or not both
-function(GetGitState _working_dir _hashvar _dirty _success)
-
-    # Initialize our returns.
-    set(${_hashvar} "GIT-NOTFOUND" PARENT_SCOPE)
-    set(${_dirty} "false" PARENT_SCOPE)
-    set(${_success} "false" PARENT_SCOPE)
-
-    # Find git.
-    if(NOT GIT_FOUND)
-        find_package(Git QUIET)
-    endif()
-    if(NOT GIT_FOUND)
-        return()
-    endif()
+#   _working_dir (in)  string; the directory from which git commands will be executed.
+#   _state       (out) list; a collection of variables representing the state of the
+#                            repository (e.g. commit SHA).
+function(GetGitState _working_dir _state)
 
     # Get the hash for HEAD.
+    set(_success "true")
     execute_process(COMMAND
         "${GIT_EXECUTABLE}" rev-parse --verify HEAD
         WORKING_DIRECTORY "${_working_dir}"
         RESULT_VARIABLE res
-        OUTPUT_VARIABLE hash
+        OUTPUT_VARIABLE _hashvar
         ERROR_QUIET
         OUTPUT_STRIP_TRAILING_WHITESPACE)
     if(NOT res EQUAL 0)
-        # The git command failed.
-        return()
+        set(_success "false")
+        set(_hashvar "GIT-NOTFOUND")
     endif()
-
-    # Record the SHA1 hash for HEAD.
-    set(${_hashvar} "${hash}" PARENT_SCOPE)
 
     # Get whether or not the working tree is dirty.
     execute_process(COMMAND
@@ -103,58 +114,18 @@ function(GetGitState _working_dir _hashvar _dirty _success)
         ERROR_QUIET
         OUTPUT_STRIP_TRAILING_WHITESPACE)
     if(NOT res EQUAL 0)
-        # The git command failed.
-        return()
-    endif()
-
-    # If there were uncommitted changes, mark it as dirty.
-    if (NOT "${out}" STREQUAL "")
-        set(${_dirty} "true" PARENT_SCOPE)
+        set(_success "false")
+        set(_dirty "false")
     else()
-        set(${_dirty} "false" PARENT_SCOPE)
+        if(NOT "${out}" STREQUAL "")
+            set(_dirty "true")
+        else()
+            set(_dirty "false")
+        endif()
     endif()
 
-    # We got this far, so git must have cooperated.
-    set(${_success} "true" PARENT_SCOPE)
-endfunction()
-
-
-
-# Function: GetGitStateSimple
-# Description: gets the current state of the git repo and represent it with a string.
-# Args:
-#   _working_dir (in)  string; the directory from which git commands will be ran.
-#   _state       (out) string; describes the current state of the repo.
-function(GetGitStateSimple _working_dir _state)
-
-    # Get the current state of the repo where the current list resides.
-    GetGitState("${_working_dir}" hash dirty success)
-
-    # We're going to construct a variable that represents the state of the repo.
-    set(help_string "\
-This is a git state file. \
-The next three lines are a success code, SHA1 hash, \
-and whether or not there were uncommitted changes.")
-    set(${_state} "${help_string}\n${success}\n${hash}\n${dirty}" PARENT_SCOPE)
-endfunction()
-
-
-
-# Function: MonitorGit
-# Description: this function sets up custom commands that make the build system
-#              check the state of git before every build. If the state has
-#              changed, then a file is configured.
-function(MonitorGit)
-    add_custom_target(AlwaysCheckGit
-        DEPENDS ${pre_configure_file}
-        BYPRODUCTS ${post_configure_file}
-        COMMAND
-            ${CMAKE_COMMAND}
-            -D_BUILD_TIME_CHECK_GIT=TRUE
-            -DGIT_WORKING_DIR=${CMAKE_CURRENT_SOURCE_DIR}
-            -Dpre_configure_file=${pre_configure_file}
-            -Dpost_configure_file=${post_configure_file}
-            -P "${CMAKE_CURRENT_LIST_FILE}")
+    # Return a list of our variables to the parent scope.
+    set(${_state} ${_success} ${_hashvar} ${_dirty} PARENT_SCOPE)
 endfunction()
 
 
@@ -164,50 +135,72 @@ endfunction()
 # Args:
 #   _working_dir    (in)  string; the directory from which git commands will be ran.
 #   _state_changed (out)    bool; whether or no the state of the repo has changed.
-function(CheckGit _working_dir _state_changed)
+#   _state         (out)    list; the repository state as a list (e.g. commit SHA).
+function(CheckGit _working_dir _state_changed _state)
 
-    # Get the state of the repo where the current list resides.
-    GetGitStateSimple(${_working_dir} current_state)
+    # Get the current state of the repo.
+    GetGitState("${_working_dir}" state)
 
+    # Set the output _state variable.
+    # (Passing by reference in CMake is awkward...)
+    set(${_state} ${state} PARENT_SCOPE)
 
-    # Check if the state has changed compared to the backup.
-    if(EXISTS "${git_state_file}")
-        file(READ "${git_state_file}" OLD_HEAD_CONTENTS)
-        if(OLD_HEAD_CONTENTS STREQUAL current_state)
+    # Check if the state has changed compared to the backup on disk.
+    if(EXISTS "${GIT_STATE_FILE}")
+        file(READ "${GIT_STATE_FILE}" OLD_HEAD_CONTENTS)
+        if(OLD_HEAD_CONTENTS STREQUAL "${state}")
+            # State didn't change.
             set(${_state_changed} "false" PARENT_SCOPE)
             return()
         endif()
     endif()
 
     # The state has changed.
-    # We need to update the state file.
-    file(WRITE "${git_state_file}" "${current_state}")
+    # We need to update the state file on disk.
+    # Future builds will compare their state to this file.
+    file(WRITE "${GIT_STATE_FILE}" "${state}")
     set(${_state_changed} "true" PARENT_SCOPE)
+endfunction()
 
+
+
+# Function: SetupGitMonitoring
+# Description: this function sets up custom commands that make the build system
+#              check the state of git before every build. If the state has
+#              changed, then a file is configured.
+function(SetupGitMonitoring)
+    add_custom_target(check_git_repository
+        ALL
+        DEPENDS ${PRE_CONFIGURE_FILE}
+        BYPRODUCTS ${POST_CONFIGURE_FILE}
+        COMMENT "Checking the git repository for changes..."
+        COMMAND
+            ${CMAKE_COMMAND}
+            -D_BUILD_TIME_CHECK_GIT=TRUE
+            -DGIT_WORKING_DIR=${GIT_WORKING_DIR}
+            -DGIT_EXECUTABLE=${GIT_EXECUTABLE}
+            -DGIT_STATE_FILE=${GIT_STATE_FILE}
+            -DPRE_CONFIGURE_FILE=${PRE_CONFIGURE_FILE}
+            -DPOST_CONFIGURE_FILE=${POST_CONFIGURE_FILE}
+            -P "${CMAKE_CURRENT_LIST_FILE}")
 endfunction()
 
 
 
 # Function: Main
 # Description: primary entry-point to the script. Functions are selected based
-#              on the GIT_FUNCTION variable.
+#              on whether it's configure or build time.
 function(Main)
     if(_BUILD_TIME_CHECK_GIT)
         # Check if the repo has changed.
         # If so, run the change action.
-        CheckGit("${GIT_WORKING_DIR}" changed)
-        if(changed)
-            message(STATUS "Checking git... changed!")
-            GitStateChangedAction()
-        else()
-            message(STATUS "Checking git... no change.")
+        CheckGit("${GIT_WORKING_DIR}" did_change state)
+        if(did_change)
+            GitStateChangedAction("${state}")
         endif()
     else()
         # >> Executes at configure time.
-        # Start monitoring git.
-        # This should only ever be run once when the module is imported.
-        # Behind the scenes, all this does is setup a custom target.
-        MonitorGit()
+        SetupGitMonitoring()
     endif()
 endfunction()
 
