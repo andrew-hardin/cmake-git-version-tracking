@@ -9,5 +9,3 @@
 
 // Whether or not there were uncommited changes present.
 #define GIT_IS_DIRTY @GIT_IS_DIRTY@
-
-
