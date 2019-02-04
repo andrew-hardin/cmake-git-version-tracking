@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.2)
 # the source code for watching a git repository.
 set(PRE_CONFIGURE_FILE "git.h.in")
 set(POST_CONFIGURE_FILE "git.h")
-include(git_watcher.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/../git_watcher.cmake)
 
 # Create a demo executable.
 # Note that one of the dependencies is the configured git header.
