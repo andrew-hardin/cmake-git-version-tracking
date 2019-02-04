@@ -2,7 +2,8 @@
 #
 # License: MIT
 # Source: https://raw.githubusercontent.com/andrew-hardin/cmake-git-version-tracking/master/git_watcher.cmake
-#
+
+
 # This file defines the functions and targets needed to monitor
 # the state of a git repo. If the state changes (e.g. a commit is made),
 # then a file gets reconfigured.
