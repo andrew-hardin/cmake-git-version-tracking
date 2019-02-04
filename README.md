@@ -37,14 +37,8 @@ like a new commit to the current branch. If nothing has changed, then we don't
 touch anything- _no recompiling or linking is triggered_. If something has changed, then we
 reconfigure the header and CMake rebuilds any downstream dependencies.
 
-## How to exercise the demo
-1. Clone the repo.
-2. Configure the project (`mkdir build && cd build && cmake ..`).
-3. Build it (`make`).
-3. Run `./demo`- note the SHA1.
-4. Build it again (`make`)- note that nothing is recompiled (sweet!).
-5. Edit README.md, then build and run the demo- note that the demo now reports that the HEAD is dirty.
-6. Commit something, then build and run the demo- note that the SHA1 has changed.
+## "The proof of the pudding is in the eating!"
+In other words, please clone the repository and [try out the demo](demo/README.md).
 
 ## Tip: how to avoid unnecessary recompilations
 If you're worried about lengthy recompilations, then **don't** place the
