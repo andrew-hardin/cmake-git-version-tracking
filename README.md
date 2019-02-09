@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.com/andrew-hardin/cmake-git-version-tracking.svg?branch=master)](https://travis-ci.com/andrew-hardin/cmake-git-version-tracking)
 # Embedding Git Versioning into a C/C++ Application
 This is a demo project that shows how to embed up-to-date
 versioning information into a C/C++ application via CMake.
