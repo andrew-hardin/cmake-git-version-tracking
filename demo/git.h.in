@@ -9,3 +9,15 @@
 
 // Whether or not there were uncommited changes present.
 #define GIT_IS_DIRTY @GIT_IS_DIRTY@
+
+// The next git tag that was found for the HEAD of the repo.
+#define GIT_TAG "@GIT_TAG@"
+
+// Number of additional commits between the git tag and HEAD (0 = exact match)
+#define GIT_ADDITIONAL_COMMITS @GIT_ADDITIONAL_COMMITS@
+
+// Version number that got extracted from the git tag
+#define VERSION_MAJOR @VERSION_MAJOR@
+#define VERSION_MINOR @VERSION_MINOR@
+#define VERSION_PATCH @VERSION_PATCH@
+#define VERSION "@VERSION@"
