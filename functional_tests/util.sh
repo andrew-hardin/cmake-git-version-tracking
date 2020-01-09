@@ -31,11 +31,11 @@ fi
 function cleanup () {
   # Remove the git directory with a force, then remove the root.
   if [ -d "$src/.git" ]; then
-    echo "TEST CLEANUP: removing git directory..."
+    echo "TEST: removing git directory..."
     rm -rf "$src/.git"
   fi
   if [ -d "$root" ]; then
-    echo "TEST CLEANUP: removing test root directory..."
+    echo "TEST: removing test root directory..."
     rm -r "$root"
   fi
 }
