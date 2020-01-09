@@ -1,7 +1,8 @@
 # git_watcher.cmake
+# https://raw.githubusercontent.com/andrew-hardin/cmake-git-version-tracking/master/git_watcher.cmake
 #
-# License: MIT
-# Source: https://raw.githubusercontent.com/andrew-hardin/cmake-git-version-tracking/master/git_watcher.cmake
+# Released under the MIT License.
+# https://raw.githubusercontent.com/andrew-hardin/cmake-git-version-tracking/master/LICENSE
 
 
 # This file defines the functions and targets needed to monitor
