@@ -5,11 +5,9 @@
 # https://raw.githubusercontent.com/andrew-hardin/cmake-git-version-tracking/master/LICENSE
 
 
-# This file defines the functions and targets needed to monitor
-# the state of a git repo. If the state changes (e.g. a commit is made),
-# then a file gets reconfigured.
-#
-# The behavior of this script can be modified by defining any of these variables:
+# This file defines a target that monitors the state of a git repo.
+# If the state changes (e.g. a commit is made), then a file gets reconfigured.
+# Here are the primary variables that control script behavior:
 #
 #   PRE_CONFIGURE_FILE (REQUIRED)
 #   -- The path to the file that'll be configured.
@@ -29,16 +27,21 @@
 #   -- The path to the git executable. It'll automatically be set if the
 #      user doesn't supply a path.
 #
-# Script design:
+# DESIGN
 #   - This script was designed similar to a Python application
 #     with a Main() function. I wanted to keep it compact to
 #     simplify "copy + paste" usage.
 #
-#   - This script is made to operate in two CMake contexts:
-#       1. Configure time context (when build files are created).
-#       2. Build time context (called via CMake -P)
-#     If you see something odd (e.g. the NOT DEFINED clauses),
-#     consider that it can run in one of two contexts.
+#   - This script is invoked under two CMake contexts:
+#       1. Configure time (when build files are created).
+#       2. Build time (called via CMake -P).
+#     The first invocation is what registers the script to
+#     be executed at build time.
+#
+# MODIFICATIONS
+#   You may wish to track other git properties like when the last
+#   commit was made. There are three sections you need to modify,
+#   and they're tagged with a ">>>" header.
 
 # Short hand for converting paths to absolute.
 macro(PATH_TO_ABSOLUTE var_name)
@@ -72,19 +75,6 @@ if(NOT DEFINED GIT_EXECUTABLE)
     find_package(Git QUIET REQUIRED)
 endif()
 CHECK_REQUIRED_VARIABLE(GIT_EXECUTABLE)
-
-
-
-# Function: GitStateChangedAction
-# Description: this function is executed when the state of the git
-#              repo changes (e.g. a commit is made).
-function(GitStateChangedAction _state_as_list)
-    # Set variables by index, then configure the file w/ these variables defined.
-    LIST(GET _state_as_list 0 GIT_RETRIEVED_STATE)
-    LIST(GET _state_as_list 1 GIT_HEAD_SHA1)
-    LIST(GET _state_as_list 2 GIT_IS_DIRTY)
-    configure_file("${PRE_CONFIGURE_FILE}" "${POST_CONFIGURE_FILE}" @ONLY)
-endfunction()
 
 
 
@@ -129,8 +119,37 @@ function(GetGitState _working_dir _state)
         endif()
     endif()
 
-    # Return a list of our variables to the parent scope.
-    set(${_state} ${_success} ${_hashvar} ${_dirty} PARENT_SCOPE)
+    # >>>
+    # 1. Additional git properties can be added here via the
+    #    "execute_process()" command.
+
+    # Return the state as a list in the parent scope.
+    set(${_state}
+            ${_success}
+            ${_hashvar}
+            ${_dirty}
+            # >>>
+            # 2. New git properties must be added to this list as part of
+            #    the "state".
+        PARENT_SCOPE)
+endfunction()
+
+
+
+# Function: GitStateChangedAction
+# Description: this function is executed when the state of the git
+#              repository changes (e.g. a commit is made).
+# Args:
+#   _state_as_list (in)  list; state variables from the git repository, and
+#                              order depends on what was set by "GetGitState".
+function(GitStateChangedAction _state_as_list)
+    LIST(GET _state_as_list 0 GIT_RETRIEVED_STATE)
+    LIST(GET _state_as_list 1 GIT_HEAD_SHA1)
+    LIST(GET _state_as_list 2 GIT_IS_DIRTY)
+    # >>>
+    # 3. Any new git properties need to be retrieved from the state before we
+    #    can configure the target file.
+    configure_file("${PRE_CONFIGURE_FILE}" "${POST_CONFIGURE_FILE}" @ONLY)
 endfunction()
 
 
