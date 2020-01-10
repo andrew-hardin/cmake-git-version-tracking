@@ -9,7 +9,7 @@ source $DIR/assert.sh
 # Solution pulled from here:
 #  https://unix.stackexchange.com/questions/30091/fix-or-alternative-for-mktemp-in-os-x
 create_temp_directory=`mktemp -d 2>/dev/null || mktemp -d -t 'mytmpdir'`
-demo_src=$DIR/../demo
+demo_src=$DIR/../hello-world
 
 # Create a root directory and copy the demo code to there.
 root=$create_temp_directory
