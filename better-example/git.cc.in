@@ -1,0 +1,13 @@
+#include "git.h"
+
+bool GitMetadata::Populated() {
+    return @GIT_RETRIEVED_STATE@;
+}
+
+std::string GitMetadata::CommitID() {
+    return "@GIT_HEAD_SHA1@";
+}
+
+bool GitMetadata::AnyUncommittedChanges() {
+    return @GIT_IS_DIRTY@;
+}

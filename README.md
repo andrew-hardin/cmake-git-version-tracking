@@ -2,6 +2,11 @@
 # Embedding Git Versioning into a C/C++ Application
 This is a demo project that shows how to embed up-to-date
 versioning information into a C/C++ application via CMake.
+The entire capability is baked into single self-contained
+[script](git_watcher.cmake).
+
+## "The proof of the pudding is in the eating!"
+In other words, please clone the repository and [try out the demo](hello-world/README.md).
 
 ## A "why does this matter" use case
 We're continuously shipping prebuilt binaries for an
@@ -38,26 +43,11 @@ like a new commit to the current branch. If nothing has changed, then we don't
 touch anything- _no recompiling or linking is triggered_. If something has changed, then we
 reconfigure the header and CMake rebuilds any downstream dependencies.
 
-## "The proof of the pudding is in the eating!"
-In other words, please clone the repository and [try out the demo](demo/README.md).
-
 ## Tip: how to avoid unnecessary recompilations
 If you're worried about lengthy recompilations, then **don't** place the
 versioning information in a header that is then included in _every_ source
 file. Doing so would defeat the purpose of partial rebuilds.
-I shudder to think of how much time would be wasted.
 
-As an alternative, place the versioning information in a source file:
-
-```
-// In git.h
-extern const std::string kGitSHA7;
-
-// In git.cc.in
-const std::string kGitSHA = "@GIT_SHA1@";
-
-// CMake then takes git.cc.in and creates git.cc
-const std::string kGitSHA = "1234567";
-```
-
-Thus, only the `git.cc` source file needs to be recompiled whenever a commit is made.
+The [better example](better-example/README.md) demonstrates one approach
+for solving the partial recompilation problem by moving the git metadata
+from a header into a source file.

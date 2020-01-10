@@ -9,7 +9,7 @@ source $DIR/assert.sh
 # Solution pulled from here:
 #  https://unix.stackexchange.com/questions/30091/fix-or-alternative-for-mktemp-in-os-x
 create_temp_directory=`mktemp -d 2>/dev/null || mktemp -d -t 'mytmpdir'`
-demo_src=$DIR/../demo
+demo_src=$DIR/../hello-world
 
 # Create a root directory and copy the demo code to there.
 root=$create_temp_directory
@@ -31,11 +31,11 @@ fi
 function cleanup () {
   # Remove the git directory with a force, then remove the root.
   if [ -d "$src/.git" ]; then
-    echo "TEST CLEANUP: removing git directory..."
+    echo "TEST: removing git directory..."
     rm -rf "$src/.git"
   fi
   if [ -d "$root" ]; then
-    echo "TEST CLEANUP: removing test root directory..."
+    echo "TEST: removing test root directory..."
     rm -r "$root"
   fi
 }
