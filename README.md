@@ -1,8 +1,8 @@
 [![Build Status](https://travis-ci.com/andrew-hardin/cmake-git-version-tracking.svg?branch=master)](https://travis-ci.com/andrew-hardin/cmake-git-version-tracking)
-# Embedding Git Versioning into a C/C++ Application
+# Embed Git metadata in a C/C++ Application
 This is a demo project that shows how to embed up-to-date
-versioning information into a C/C++ application via CMake.
-The entire capability is baked into single self-contained
+git metadata in a C/C++ application via CMake. The entire
+capability is baked into single self-contained
 [script](git_watcher.cmake).
 
 ## "The proof of the pudding is in the eating!"
