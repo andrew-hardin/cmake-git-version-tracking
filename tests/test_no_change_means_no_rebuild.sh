@@ -34,7 +34,7 @@ fi
 
 # Watch the git-state file and make sure it doesn't change
 # when we try to rebuild the project.
-state_file="$build/git-state"
+state_file="$build/git-state-hash"
 demo_file="$build/demo"
 last_touched_state="$(stat -c %y $state_file)"
 last_touched_exe="$(stat -c %y $demo_file)"

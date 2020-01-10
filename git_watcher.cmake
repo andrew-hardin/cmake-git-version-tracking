@@ -40,7 +40,7 @@
 #
 # MODIFICATIONS
 #   You may wish to track other git properties like when the last
-#   commit was made. There are three sections you need to modify,
+#   commit was made. There are two sections you need to modify,
 #   and they're tagged with a ">>>" header.
 
 # Short hand for converting paths to absolute.
@@ -66,7 +66,7 @@ endmacro()
 
 CHECK_REQUIRED_VARIABLE(PRE_CONFIGURE_FILE)
 CHECK_REQUIRED_VARIABLE(POST_CONFIGURE_FILE)
-CHECK_OPTIONAL_VARIABLE(GIT_STATE_FILE "${CMAKE_BINARY_DIR}/git-state")
+CHECK_OPTIONAL_VARIABLE(GIT_STATE_FILE "${CMAKE_BINARY_DIR}/git-state-hash")
 CHECK_OPTIONAL_VARIABLE(GIT_WORKING_DIR "${CMAKE_SOURCE_DIR}")
 
 # Check the optional git variable.
@@ -77,27 +77,36 @@ endif()
 CHECK_REQUIRED_VARIABLE(GIT_EXECUTABLE)
 
 
+set(_state_variable_names
+    GIT_RETRIEVED_STATE
+    GIT_HEAD_SHA1
+    GIT_IS_DIRTY
+    # >>>
+    # 1. Add the name of the additional git variable you're interested in monitoring
+    #    to this list.
+)
+
 
 # Function: GetGitState
 # Description: gets the current state of the git repo.
 # Args:
 #   _working_dir (in)  string; the directory from which git commands will be executed.
-#   _state       (out) list; a collection of variables representing the state of the
-#                            repository (e.g. commit SHA).
-function(GetGitState _working_dir _state)
+function(GetGitState _working_dir)
 
     # Get the hash for HEAD.
-    set(_success "true")
+    set(ENV{GIT_RETRIEVED_STATE} "true")
     execute_process(COMMAND
         "${GIT_EXECUTABLE}" rev-parse --verify HEAD
         WORKING_DIRECTORY "${_working_dir}"
         RESULT_VARIABLE res
-        OUTPUT_VARIABLE _hashvar
+        OUTPUT_VARIABLE out
         ERROR_QUIET
         OUTPUT_STRIP_TRAILING_WHITESPACE)
     if(NOT res EQUAL 0)
-        set(_success "false")
-        set(_hashvar "GIT-NOTFOUND")
+        set(ENV{GIT_RETRIEVED_STATE} "false")
+        set(ENV{GIT_HEAD_SHA1} "GIT-NOTFOUND")
+    else()
+        set(ENV{GIT_HEAD_SHA1} ${out})
     endif()
 
     # Get whether or not the working tree is dirty.
@@ -109,29 +118,22 @@ function(GetGitState _working_dir _state)
         ERROR_QUIET
         OUTPUT_STRIP_TRAILING_WHITESPACE)
     if(NOT res EQUAL 0)
-        set(_success "false")
-        set(_dirty "false")
+        set(ENV{GIT_RETRIEVED_STATE} "false")
+        set(ENV{GIT_IS_DIRTY} "false")
     else()
         if(NOT "${out}" STREQUAL "")
-            set(_dirty "true")
+            set(ENV{GIT_IS_DIRTY} "true")
         else()
-            set(_dirty "false")
+            set(ENV{GIT_IS_DIRTY} "false")
         endif()
     endif()
 
     # >>>
-    # 1. Additional git properties can be added here via the
-    #    "execute_process()" command.
+    # 2. Additional git properties can be added here via the
+    #    "execute_process()" command. Be sure to set them in
+    #    the environment using the same variable name you added
+    #    to the "_state_variable_names" list.
 
-    # Return the state as a list in the parent scope.
-    set(${_state}
-            ${_success}
-            ${_hashvar}
-            ${_dirty}
-            # >>>
-            # 2. New git properties must be added to this list as part of
-            #    the "state".
-        PARENT_SCOPE)
 endfunction()
 
 
@@ -139,17 +141,25 @@ endfunction()
 # Function: GitStateChangedAction
 # Description: this function is executed when the state of the git
 #              repository changes (e.g. a commit is made).
-# Args:
-#   _state_as_list (in)  list; state variables from the git repository, and
-#                              order depends on what was set by "GetGitState".
-function(GitStateChangedAction _state_as_list)
-    LIST(GET _state_as_list 0 GIT_RETRIEVED_STATE)
-    LIST(GET _state_as_list 1 GIT_HEAD_SHA1)
-    LIST(GET _state_as_list 2 GIT_IS_DIRTY)
-    # >>>
-    # 3. Any new git properties need to be retrieved from the state before we
-    #    can configure the target file.
+function(GitStateChangedAction)
+    foreach(var_name ${_state_variable_names})
+        set(${var_name} $ENV{${var_name}})
+    endforeach()
     configure_file("${PRE_CONFIGURE_FILE}" "${POST_CONFIGURE_FILE}" @ONLY)
+endfunction()
+
+
+
+# Function: HashGitState
+# Description: loop through the git state variables and compute a unique hash.
+# Args:
+#   _state (out)  string; a hash computed from the current git state.
+function(HashGitState _state)
+    set(ans "")
+    foreach(var_name ${_state_variable_names})
+        string(SHA256 ans "${ans}$ENV{${var_name}}")
+    endforeach()
+    set(${_state} ${ans} PARENT_SCOPE)
 endfunction()
 
 
@@ -159,15 +169,14 @@ endfunction()
 # Args:
 #   _working_dir    (in)  string; the directory from which git commands will be ran.
 #   _state_changed (out)    bool; whether or no the state of the repo has changed.
-#   _state         (out)    list; the repository state as a list (e.g. commit SHA).
-function(CheckGit _working_dir _state_changed _state)
+function(CheckGit _working_dir _state_changed)
 
     # Get the current state of the repo.
-    GetGitState("${_working_dir}" state)
+    GetGitState("${_working_dir}")
 
-    # Set the output _state variable.
-    # (Passing by reference in CMake is awkward...)
-    set(${_state} ${state} PARENT_SCOPE)
+    # Convert that state into a hash that we can compare against
+    # the hash stored on-disk.
+    HashGitState(state)
 
     # Check if the state has changed compared to the backup on disk.
     if(EXISTS "${GIT_STATE_FILE}")
@@ -218,9 +227,9 @@ function(Main)
     if(_BUILD_TIME_CHECK_GIT)
         # Check if the repo has changed.
         # If so, run the change action.
-        CheckGit("${GIT_WORKING_DIR}" did_change state)
-        if(did_change)
-            GitStateChangedAction("${state}")
+        CheckGit("${GIT_WORKING_DIR}" changed)
+        if(changed)
+            GitStateChangedAction()
         endif()
     else()
         # >> Executes at configure time.
