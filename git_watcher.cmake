@@ -81,10 +81,34 @@ set(_state_variable_names
     GIT_RETRIEVED_STATE
     GIT_HEAD_SHA1
     GIT_IS_DIRTY
+    GIT_AUTHOR_NAME
+    GIT_AUTHOR_EMAIL
+    GIT_COMMIT_DATE_ISO8601
+    GIT_COMMIT_SUBJECT
+    GIT_COMMIT_BODY
     # >>>
     # 1. Add the name of the additional git variable you're interested in monitoring
     #    to this list.
 )
+
+
+
+# Macro: RunGitCommand
+# Description: short-hand macro for calling a git function. Outputs are the
+#              "exit_code" and "output" variables.
+macro(RunGitCommand)
+    execute_process(COMMAND
+        "${GIT_EXECUTABLE}" ${ARGV}
+        WORKING_DIRECTORY "${_working_dir}"
+        RESULT_VARIABLE exit_code
+        OUTPUT_VARIABLE output
+        ERROR_QUIET
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+    if(NOT exit_code EQUAL 0)
+        set(ENV{GIT_RETRIEVED_STATE} "false")
+    endif()
+endmacro()
+
 
 
 # Function: GetGitState
@@ -93,39 +117,52 @@ set(_state_variable_names
 #   _working_dir (in)  string; the directory from which git commands will be executed.
 function(GetGitState _working_dir)
 
-    # Get the hash for HEAD.
+    # This is an error code that'll be set to FALSE if the
+    # RunGitCommand ever returns a non-zero exit code.
     set(ENV{GIT_RETRIEVED_STATE} "true")
-    execute_process(COMMAND
-        "${GIT_EXECUTABLE}" rev-parse --verify HEAD
-        WORKING_DIRECTORY "${_working_dir}"
-        RESULT_VARIABLE res
-        OUTPUT_VARIABLE out
-        ERROR_QUIET
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-    if(NOT res EQUAL 0)
-        set(ENV{GIT_RETRIEVED_STATE} "false")
-        set(ENV{GIT_HEAD_SHA1} "GIT-NOTFOUND")
-    else()
-        set(ENV{GIT_HEAD_SHA1} ${out})
-    endif()
 
     # Get whether or not the working tree is dirty.
-    execute_process(COMMAND
-        "${GIT_EXECUTABLE}" status --porcelain
-        WORKING_DIRECTORY "${_working_dir}"
-        RESULT_VARIABLE res
-        OUTPUT_VARIABLE out
-        ERROR_QUIET
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-    if(NOT res EQUAL 0)
-        set(ENV{GIT_RETRIEVED_STATE} "false")
+    RunGitCommand(status --porcelain)
+    if(NOT exit_code EQUAL 0)
         set(ENV{GIT_IS_DIRTY} "false")
     else()
-        if(NOT "${out}" STREQUAL "")
+        if(NOT "${output}" STREQUAL "")
             set(ENV{GIT_IS_DIRTY} "true")
         else()
             set(ENV{GIT_IS_DIRTY} "false")
         endif()
+    endif()
+
+    # There's a long list of attributes grabbed from git show.
+    set(object HEAD)
+    RunGitCommand(show -s "--format=%H" ${object})
+    if(exit_code EQUAL 0)
+        set(ENV{GIT_HEAD_SHA1} ${output})
+    endif()
+
+    RunGitCommand(show -s "--format=%an" ${object})
+    if(exit_code EQUAL 0)
+        set(ENV{GIT_AUTHOR_NAME} "${output}")
+    endif()
+
+    RunGitCommand(show -s "--format=%ae" ${object})
+    if(exit_code EQUAL 0)
+        set(ENV{GIT_AUTHOR_EMAIL} "${output}")
+    endif()
+
+    RunGitCommand(show -s "--format=%cI" ${object})
+    if(exit_code EQUAL 0)
+        set(ENV{GIT_COMMIT_DATE_ISO8601} "${output}")
+    endif()
+
+    RunGitCommand(show -s "--format=%s" ${object})
+    if(exit_code EQUAL 0)
+        set(ENV{GIT_COMMIT_SUBJECT} "${output}")
+    endif()
+
+    RunGitCommand(show -s "--format=%b" ${object})
+    if(exit_code EQUAL 0)
+        set(ENV{GIT_COMMIT_BODY} "${output}")
     endif()
 
     # >>>

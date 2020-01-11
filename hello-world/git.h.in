@@ -9,3 +9,18 @@
 
 // Whether or not there were uncommited changes present.
 #define GIT_IS_DIRTY @GIT_IS_DIRTY@
+
+// The name of person who committed HEAD.
+#define GIT_AUTHOR_NAME "@GIT_AUTHOR_NAME@"
+
+// The email addess of the person who committed HEAD.
+#define GIT_AUTHOR_EMAIL "@GIT_AUTHOR_EMAIL@"
+
+// When HEAD was committed.
+#define GIT_COMMIT_DATE_ISO8601 "@GIT_COMMIT_DATE_ISO8601@"
+
+// The subject line for the HEAD commit.
+#define GIT_COMMIT_SUBJECT "@GIT_COMMIT_SUBJECT@"
+
+// The notes attached to the HEAD commit.
+#define GIT_COMMIT_BODY "@GIT_COMMIT_BODY@"

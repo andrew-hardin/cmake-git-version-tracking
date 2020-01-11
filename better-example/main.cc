@@ -5,10 +5,13 @@
 
 int main() {
     if(GitMetadata::Populated()) {
-        std::cout << "INFO: " << GitMetadata::CommitID() << std::endl;
         if(GitMetadata::AnyUncommittedChanges()) {
-            std::cerr << "WARN: there were uncommitted changes." << std::endl;
+            std::cerr << "WARN: there were uncommitted changes at build-time." << std::endl;
         }
+        std::cout << "commit " << GitMetadata::CommitSHA1() << " (HEAD)\n"
+                  << "Author: " << GitMetadata::AuthorName() << " <" << GitMetadata::AuthorEmail() << ">\n"
+                  << "Date: " << GitMetadata::CommitDate() << "\n\n"
+                  << GitMetadata::CommitSubject() << "\n" << GitMetadata::CommitBody() << std::endl;
         return EXIT_SUCCESS;
     }
     else {

@@ -8,10 +8,20 @@ public:
   // code without revision history).
   static bool Populated();
 
-  // Get the commit id (SHA1).
-  static std::string CommitID();
-
   // Were there any uncommitted changes that won't be reflected
   // in the CommitID?
   static bool AnyUncommittedChanges();
+
+  // The commit author's name.
+  static std::string AuthorName();
+  // The commit author's email.
+  static std::string AuthorEmail();
+  // The commit SHA1.
+  static std::string CommitSHA1();
+  // The ISO8601 commit date.
+  static std::string CommitDate();
+  // The commit subject.
+  static std::string CommitSubject();
+  // The commit body.
+  static std::string CommitBody();
 };
