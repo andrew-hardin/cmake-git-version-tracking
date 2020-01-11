@@ -117,15 +117,9 @@ endmacro()
 #   _working_dir (in)  string; the directory from which git commands will be executed.
 function(GetGitState _working_dir)
 
-    # Get the hash for HEAD.
-    set(object HEAD)
+    # This is an error code that'll be set to FALSE if the
+    # RunGitCommand ever returns a non-zero exit code.
     set(ENV{GIT_RETRIEVED_STATE} "true")
-    RunGitCommand(rev-parse --verify ${object})
-    if(NOT exit_code EQUAL 0)
-        set(ENV{GIT_HEAD_SHA1} "GIT-NOTFOUND")
-    else()
-        set(ENV{GIT_HEAD_SHA1} ${output})
-    endif()
 
     # Get whether or not the working tree is dirty.
     RunGitCommand(status --porcelain)
@@ -140,7 +134,12 @@ function(GetGitState _working_dir)
     endif()
 
     # There's a long list of attributes grabbed from git show.
-    # CMake has poor support for tuple-like data structures.
+    set(object HEAD)
+    RunGitCommand(show -s "--format=%H" ${object})
+    if(exit_code EQUAL 0)
+        set(ENV{GIT_HEAD_SHA1} ${output})
+    endif()
+
     RunGitCommand(show -s "--format=%an" ${object})
     if(exit_code EQUAL 0)
         set(ENV{GIT_AUTHOR_NAME} "${output}")
