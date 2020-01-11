@@ -21,6 +21,6 @@ std::string GitMetadata::CommitDate() {
 std::string GitMetadata::CommitSubject() {
     return "@GIT_COMMIT_SUBJECT@";
 }
-std::string GitMetadata::CommitNotes() {
-    return "@GIT_COMMIT_NOTES@";
+std::string GitMetadata::CommitBody() {
+    return "@GIT_COMMIT_BODY@";
 }

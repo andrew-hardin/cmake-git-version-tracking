@@ -23,4 +23,4 @@
 #define GIT_COMMIT_SUBJECT "@GIT_COMMIT_SUBJECT@"
 
 // The notes attached to the HEAD commit.
-#define GIT_COMMIT_NOTES "@GIT_COMMIT_NOTES@"
+#define GIT_COMMIT_BODY "@GIT_COMMIT_BODY@"

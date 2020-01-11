@@ -13,7 +13,7 @@ int main() {
         std::cout << "\n\ncommit " << GIT_HEAD_SHA1 << " (HEAD)\n"
                   << "Author: " << GIT_AUTHOR_NAME << " <" << GIT_AUTHOR_EMAIL << ">\n"
                   << "Date: " << GIT_COMMIT_DATE_ISO8601 << "\n\n"
-                  << GIT_COMMIT_SUBJECT << "\n" << GIT_COMMIT_NOTES << std::endl;
+                  << GIT_COMMIT_SUBJECT << "\n" << GIT_COMMIT_BODY << std::endl;
         return EXIT_SUCCESS;
     }
     else {

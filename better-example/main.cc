@@ -11,7 +11,7 @@ int main() {
         std::cout << "commit " << GitMetadata::CommitSHA1() << " (HEAD)\n"
                   << "Author: " << GitMetadata::AuthorName() << " <" << GitMetadata::AuthorEmail() << ">\n"
                   << "Date: " << GitMetadata::CommitDate() << "\n\n"
-                  << GitMetadata::CommitSubject() << "\n" << GitMetadata::CommitNotes() << std::endl;
+                  << GitMetadata::CommitSubject() << "\n" << GitMetadata::CommitBody() << std::endl;
         return EXIT_SUCCESS;
     }
     else {

@@ -85,7 +85,7 @@ set(_state_variable_names
     GIT_AUTHOR_EMAIL
     GIT_COMMIT_DATE_ISO8601
     GIT_COMMIT_SUBJECT
-    GIT_COMMIT_NOTES
+    GIT_COMMIT_BODY
     # >>>
     # 1. Add the name of the additional git variable you're interested in monitoring
     #    to this list.
@@ -161,9 +161,9 @@ function(GetGitState _working_dir)
         set(ENV{GIT_COMMIT_SUBJECT} "${output}")
     endif()
 
-    RunGitCommand(show -s "--format=%N" ${object})
+    RunGitCommand(show -s "--format=%b" ${object})
     if(exit_code EQUAL 0)
-        set(ENV{GIT_COMMIT_NOTES} "${output}")
+        set(ENV{GIT_COMMIT_BODY} "${output}")
     endif()
 
     # >>>

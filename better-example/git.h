@@ -20,8 +20,8 @@ public:
   static std::string CommitSHA1();
   // The ISO8601 commit date.
   static std::string CommitDate();
-  // The commit subject (first line of commit message).
+  // The commit subject.
   static std::string CommitSubject();
-  // The commit notes (remaining lines in commit message).
-  static std::string CommitNotes();
+  // The commit body.
+  static std::string CommitBody();
 };
