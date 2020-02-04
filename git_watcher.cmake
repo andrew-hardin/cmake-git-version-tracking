@@ -265,7 +265,7 @@ function(Main)
         # Check if the repo has changed.
         # If so, run the change action.
         CheckGit("${GIT_WORKING_DIR}" changed)
-        if(changed)
+        if(changed OR NOT EXISTS "${POST_CONFIGURE_FILE}")
             GitStateChangedAction()
         endif()
     else()
