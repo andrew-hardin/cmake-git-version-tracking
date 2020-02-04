@@ -242,7 +242,9 @@ function(SetupGitMonitoring)
     add_custom_target(check_git
         ALL
         DEPENDS ${PRE_CONFIGURE_FILE}
-        BYPRODUCTS ${POST_CONFIGURE_FILE}
+        BYPRODUCTS
+            ${POST_CONFIGURE_FILE}
+            ${GIT_STATE_FILE}
         COMMENT "Checking the git repository for changes..."
         COMMAND
             ${CMAKE_COMMAND}
