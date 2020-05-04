@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.2)
+project(HelloWorld)
 
 # Define the two required variables before including
 # the source code for watching a git repository.
