@@ -5,7 +5,7 @@ project(BetterExample)
 # the source code for watching a git repository.
 set(PRE_CONFIGURE_FILE "git.cc.in")
 set(POST_CONFIGURE_FILE "${CMAKE_CURRENT_BINARY_DIR}/git.cpp")
-include(git_watcher.cmake)
+include(../git_watcher.cmake)
 
 # Create a library out of the compiled post-configure file.
 add_library(git STATIC ${POST_CONFIGURE_FILE})

@@ -5,7 +5,7 @@ project(HelloWorld)
 # the source code for watching a git repository.
 set(PRE_CONFIGURE_FILE "git.h.in")
 set(POST_CONFIGURE_FILE "git.h")
-include(git_watcher.cmake)
+include(../git_watcher.cmake)
 
 # Create a demo executable using a single source file that
 # prints the information baked into the "git.h" header.

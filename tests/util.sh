@@ -10,13 +10,15 @@ source $DIR/assert.sh
 #  https://unix.stackexchange.com/questions/30091/fix-or-alternative-for-mktemp-in-os-x
 create_temp_directory=`mktemp -d 2>/dev/null || mktemp -d -t 'mytmpdir'`
 demo_src=$DIR/../hello-world
+git_watcher=$DIR/../git_watcher.cmake
 
 # Create a root directory and copy the demo code to there.
 root=$create_temp_directory
 src=$root/source
 build=$root/build
 mkdir -p $build
-cp -Lr $demo_src $src  # note -L flag to grab symlink content.
+cp -r $demo_src $src
+cp $git_watcher $src/..
 
 # Make sure we don't carry along a preconfigured git.h header.
 if [ -f src/git.h ]; then
