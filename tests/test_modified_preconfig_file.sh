@@ -14,6 +14,11 @@ git init
 git add .
 git commit -am "Initial commit."
 
+# Make the state dirty, so that when we modify the
+# preconfigure file it doesn't regenerate just
+# because the git-state changed.
+echo "hello world" > dirty
+
 # Configure and build the project.
 set -e
 cd $build
