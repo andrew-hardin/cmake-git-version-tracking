@@ -215,6 +215,14 @@ function(CheckGit _working_dir _state_changed)
     # the hash stored on-disk.
     HashGitState(state)
 
+    # Issue 14: post-configure file isn't being regenerated.
+    #
+    # Update the state to include the SHA256 for the pre-configure file.
+    # This forces the post-configure file to be regenerated if the
+    # pre-configure file has changed.
+    file(SHA256 ${PRE_CONFIGURE_FILE} preconfig_hash)
+    string(SHA256 state "${preconfig_hash}${state}")
+
     # Check if the state has changed compared to the backup on disk.
     if(EXISTS "${GIT_STATE_FILE}")
         file(READ "${GIT_STATE_FILE}" OLD_HEAD_CONTENTS)
