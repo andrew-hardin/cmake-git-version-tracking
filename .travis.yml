@@ -6,5 +6,6 @@ os:
 - linux
 script:
 - ./tests/run_all.sh
+- ./tests/run_examples.sh
 
 

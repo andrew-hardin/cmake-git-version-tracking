@@ -4,7 +4,7 @@ project(BetterExample)
 # Define the two required variables before including
 # the source code for watching a git repository.
 set(PRE_CONFIGURE_FILE "git.cc.in")
-set(POST_CONFIGURE_FILE "${CMAKE_CURRENT_BINARY_DIR}/git.cpp")
+set(POST_CONFIGURE_FILE "${CMAKE_CURRENT_BINARY_DIR}/git.cc")
 include(../git_watcher.cmake)
 
 # Create a library out of the compiled post-configure file.
