@@ -150,7 +150,7 @@ function(GetGitState _working_dir)
         set(ENV{GIT_AUTHOR_EMAIL} "${output}")
     endif()
 
-    RunGitCommand(show -s "--format=%cI" ${object})
+    RunGitCommand(show -s "--format=%ci" ${object})
     if(exit_code EQUAL 0)
         set(ENV{GIT_COMMIT_DATE_ISO8601} "${output}")
     endif()
