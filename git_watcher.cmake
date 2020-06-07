@@ -162,13 +162,20 @@ function(GetGitState _working_dir)
 
     RunGitCommand(show -s "--format=%b" ${object})
     if(exit_code EQUAL 0)
-        # Escape line breaks in the commit message.
-        string(REPLACE "\r\n" "\\r\\n\\\r\n" safe ${output})
-        if(safe STREQUAL output)
-            # Didn't have windows lines - try unix lines.
-            string(REPLACE "\n" "\\n\\\n" safe ${output})
+        if(output)
+            # Escape line breaks in the commit message.
+            string(REPLACE "\r\n" "\\r\\n\\\r\n" safe ${output})
+            if(safe STREQUAL output)
+                # Didn't have windows lines - try unix lines.
+                string(REPLACE "\n" "\\n\\\n" safe ${output})
+            endif()
+        else()
+            # There was no commit body - set the safe string to empty.
+            set(safe "")
         endif()
         set(ENV{GIT_COMMIT_BODY} "\"${safe}\"")
+    else()
+        set(ENV{GIT_COMMIT_BODY} "\"\"") # empty string.
     endif()
 
     # >>>
