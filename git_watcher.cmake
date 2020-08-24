@@ -164,10 +164,10 @@ function(GetGitState _working_dir)
     if(exit_code EQUAL 0)
         if(output)
             # Escape line breaks in the commit message.
-            string(REPLACE "\r\n" "\\r\\n\\\r\n" safe ${output})
+            string(REPLACE "\r\n" "\\r\\n\\\r\n" safe "${output}")
             if(safe STREQUAL output)
                 # Didn't have windows lines - try unix lines.
-                string(REPLACE "\n" "\\n\\\n" safe ${output})
+                string(REPLACE "\n" "\\n\\\n" safe "${output}")
             endif()
         else()
             # There was no commit body - set the safe string to empty.
