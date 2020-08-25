@@ -183,19 +183,19 @@ function(GetGitState _working_dir)
         set(ENV{GIT_COMMIT_BODY} "\"\"") # empty string.
     endif()
 
+    # Get output of git describe
+    RunGitCommand(describe --always ${object})
+    if(NOT exit_code EQUAL 0)
+        set(ENV{GIT_DESCRIBE} "unknown")
+    else()
+        set(ENV{GIT_DESCRIBE} "${output}")
+    endif()
+
     # >>>
     # 2. Additional git properties can be added here via the
     #    "execute_process()" command. Be sure to set them in
     #    the environment using the same variable name you added
     #    to the "_state_variable_names" list.
-
-    # Get output of git describe
-    RunGitCommand(describe --always)
-    if(NOT exit_code EQUAL 0)
-        set(ENV{GIT_DESCRIBE} "false")
-    else()
-        set(ENV{GIT_DESCRIBE} "${output}")
-    endif()
 
 endfunction()
 

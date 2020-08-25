@@ -24,3 +24,6 @@
 
 // The notes attached to the HEAD commit.
 #define GIT_COMMIT_BODY @GIT_COMMIT_BODY@
+
+// The output from git --describe (e.g. the most recent tag)
+#define GIT_DESCRIBE "@GIT_DESCRIBE@"
