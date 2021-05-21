@@ -27,6 +27,11 @@
 #   -- The path to the git executable. It'll automatically be set if the
 #      user doesn't supply a path.
 #
+#   GIT_FAIL_IF_NONZERO_EXIT (optional)
+#   -- Raise a FATAL_ERROR if any of the git commands return a non-zero
+#      exit code. This is set to TRUE by default. You can set this to FALSE
+#      if you'd like the build to continue even if a git command fails.
+#
 # DESIGN
 #   - This script was designed similar to a Python application
 #     with a Main() function. I wanted to keep it compact to
@@ -57,10 +62,16 @@ macro(CHECK_REQUIRED_VARIABLE var_name)
 endmacro()
 
 # Check that an optional variable is set, or, set it to a default value.
-macro(CHECK_OPTIONAL_VARIABLE var_name default_value)
+macro(CHECK_OPTIONAL_VARIABLE_NOPATH var_name default_value)
     if(NOT DEFINED ${var_name})
         set(${var_name} ${default_value})
     endif()
+endmacro()
+
+# Check that an optional variable is set, or, set it to a default value.
+# Also converts that path to an abspath.
+macro(CHECK_OPTIONAL_VARIABLE var_name default_value)
+    CHECK_OPTIONAL_VARIABLE_NOPATH(${var_name} ${default_value})
     PATH_TO_ABSOLUTE(${var_name})
 endmacro()
 
@@ -68,6 +79,7 @@ CHECK_REQUIRED_VARIABLE(PRE_CONFIGURE_FILE)
 CHECK_REQUIRED_VARIABLE(POST_CONFIGURE_FILE)
 CHECK_OPTIONAL_VARIABLE(GIT_STATE_FILE "${CMAKE_BINARY_DIR}/git-state-hash")
 CHECK_OPTIONAL_VARIABLE(GIT_WORKING_DIR "${CMAKE_SOURCE_DIR}")
+CHECK_OPTIONAL_VARIABLE_NOPATH(GIT_FAIL_IF_NONZERO_EXIT TRUE)
 
 # Check the optional git variable.
 # If it's not set, we'll try to find it using the CMake packaging system.
@@ -103,10 +115,18 @@ macro(RunGitCommand)
         WORKING_DIRECTORY "${_working_dir}"
         RESULT_VARIABLE exit_code
         OUTPUT_VARIABLE output
-        ERROR_QUIET
+        ERROR_VARIABLE stderr
         OUTPUT_STRIP_TRAILING_WHITESPACE)
     if(NOT exit_code EQUAL 0)
         set(ENV{GIT_RETRIEVED_STATE} "false")
+
+        # Issue 26: git info not properly set
+        #
+        # Check if we should fail if any of the exit codes are non-zero.
+        if(GIT_FAIL_IF_NONZERO_EXIT)
+            string(REPLACE ";" " " args_with_spaces "${ARGV}")
+            message(FATAL_ERROR "${stderr} (${GIT_EXECUTABLE} ${args_with_spaces})")
+        endif()
     endif()
 endmacro()
 
@@ -288,6 +308,7 @@ function(SetupGitMonitoring)
             -DGIT_STATE_FILE=${GIT_STATE_FILE}
             -DPRE_CONFIGURE_FILE=${PRE_CONFIGURE_FILE}
             -DPOST_CONFIGURE_FILE=${POST_CONFIGURE_FILE}
+            -DGIT_FAIL_IF_NONZERO_EXIT=${GIT_FAIL_IF_NONZERO_EXIT}
             -P "${CMAKE_CURRENT_LIST_FILE}")
 endfunction()
 
