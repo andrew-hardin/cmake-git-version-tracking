@@ -196,6 +196,8 @@ function(GetGitState _working_dir)
     RunGitCommand(show -s "--format=%b" ${object})
     if(exit_code EQUAL 0)
         if(output)
+            # Escape \
+            string(REPLACE "\\" "\\\\" output "${output}")
             # Escape quotes
             string(REPLACE "\"" "\\\"" output "${output}")
             # Escape line breaks in the commit message.
