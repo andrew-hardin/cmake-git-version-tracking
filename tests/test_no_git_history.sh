@@ -12,7 +12,7 @@ source $DIR/util.sh
 # The build should fail because the git repo is missing.
 set -e
 cd build
-cmake -g "$TEST_GENERATOR" $src
+cmake -G "$TEST_GENERATOR" $src
 set +e
 cmake --build . --target demo
 assert "$? -ne 1" $LINENO
