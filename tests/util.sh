@@ -27,7 +27,7 @@ fi
 
 # Set the default generator if it hasn't been set already.
 if [ ! -n "$TEST_GENERATOR" ]; then
-  TEST_GENERATOR="Unix Makefiles"
+  TEST_GENERATOR="Ninja"
 fi
 
 function cleanup () {
