@@ -27,10 +27,14 @@
 #   -- The path to the git executable. It'll automatically be set if the
 #      user doesn't supply a path.
 #
-#   GIT_FAIL_IF_NONZERO_EXIT (optional)
+#   GIT_FAIL_IF_NONZERO_EXIT (OPTIONAL)
 #   -- Raise a FATAL_ERROR if any of the git commands return a non-zero
 #      exit code. This is set to TRUE by default. You can set this to FALSE
 #      if you'd like the build to continue even if a git command fails.
+#
+#   GIT_IGNORE_UNTRACKED (OPTIONAL)
+#   -- Ignore the presence of untracked files when detecting if the
+#      working tree is dirty. This is set to FALSE by default.
 #
 # DESIGN
 #   - This script was designed similar to a Python application
@@ -80,6 +84,7 @@ CHECK_REQUIRED_VARIABLE(POST_CONFIGURE_FILE)
 CHECK_OPTIONAL_VARIABLE(GIT_STATE_FILE "${CMAKE_BINARY_DIR}/git-state-hash")
 CHECK_OPTIONAL_VARIABLE(GIT_WORKING_DIR "${CMAKE_SOURCE_DIR}")
 CHECK_OPTIONAL_VARIABLE_NOPATH(GIT_FAIL_IF_NONZERO_EXIT TRUE)
+CHECK_OPTIONAL_VARIABLE_NOPATH(GIT_IGNORE_UNTRACKED FALSE)
 
 # Check the optional git variable.
 # If it's not set, we'll try to find it using the CMake packaging system.
@@ -143,7 +148,12 @@ function(GetGitState _working_dir)
     set(ENV{GIT_RETRIEVED_STATE} "true")
 
     # Get whether or not the working tree is dirty.
-    RunGitCommand(status --porcelain)
+    if (GIT_IGNORE_UNTRACKED)
+        set(untracked_flag "-uno")
+    else()
+        set(untracked_flag "-unormal")
+    endif()
+    RunGitCommand(status --porcelain ${untracked_flag})
     if(NOT exit_code EQUAL 0)
         set(ENV{GIT_IS_DIRTY} "false")
     else()
@@ -309,6 +319,7 @@ function(SetupGitMonitoring)
             -DPRE_CONFIGURE_FILE=${PRE_CONFIGURE_FILE}
             -DPOST_CONFIGURE_FILE=${POST_CONFIGURE_FILE}
             -DGIT_FAIL_IF_NONZERO_EXIT=${GIT_FAIL_IF_NONZERO_EXIT}
+            -DGIT_IGNORE_UNTRACKED=${GIT_IGNORE_UNTRACKED}
             -P "${CMAKE_CURRENT_LIST_FILE}")
 endfunction()
 
