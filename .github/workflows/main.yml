@@ -18,5 +18,6 @@ jobs:
       run: |
         git config --global user.email "ci@example.com"
         git config --global user.name "CI"
+        git config --global init.defaultBranch master
         ./tests/run_all.sh
         ./tests/run_examples.sh
