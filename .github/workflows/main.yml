@@ -1,4 +1,4 @@
-name: CMake Git Version Tracking
+name: Regression Tests
 
 on:
   push:

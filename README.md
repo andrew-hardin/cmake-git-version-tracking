@@ -1,3 +1,4 @@
+[![Regression Tests](https://github.com/andrew-hardin/cmake-git-version-tracking/actions/workflows/main.yml/badge.svg)](https://github.com/andrew-hardin/cmake-git-version-tracking/actions/workflows/main.yml)
 # Embed Git metadata in C/C++ project
 This is a demo project that shows how to embed up-to-date
 git metadata in a C/C++ project via CMake. The entire
