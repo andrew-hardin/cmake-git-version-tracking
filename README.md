@@ -1,4 +1,3 @@
-[![Build Status](https://travis-ci.com/andrew-hardin/cmake-git-version-tracking.svg?branch=master)](https://travis-ci.com/andrew-hardin/cmake-git-version-tracking)
 # Embed Git metadata in C/C++ project
 This is a demo project that shows how to embed up-to-date
 git metadata in a C/C++ project via CMake. The entire
