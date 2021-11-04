@@ -15,4 +15,4 @@ cd build
 cmake -G "$TEST_GENERATOR" $src
 set +e
 cmake --build . --target demo
-assert "$? -ne 1" $LINENO
+assert "$? -ne 0" $LINENO

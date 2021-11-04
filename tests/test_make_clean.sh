@@ -45,12 +45,12 @@ assert "-f $src/git.h" $LINENO
 assert "-f $build/git-state-hash" $LINENO
 
 # Make followed by clean should scrub both these files.
-make
-make clean
+cmake --build .
+cmake --build . --target clean
 assert "! -f $src/git.h" $LINENO
 assert "! -f $build/git-state-hash" $LINENO
 
 # We should generate them again after calling make.
-make
+cmake --build .
 assert "-f $src/git.h" $LINENO
 assert "-f $build/git-state-hash" $LINENO

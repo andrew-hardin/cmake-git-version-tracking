@@ -24,5 +24,5 @@ cmake --build . --target demo
 # Nuke the header, then check that it gets generated automatically
 # when we try to build the project again.
 rm $src/git.h
-make
+cmake --build .
 assert "-f $src/git.h" $LINENO
