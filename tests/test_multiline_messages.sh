@@ -12,7 +12,7 @@ set -e
 cd $src
 git init
 git add .
-git commit -am 'Oh no!
+git commit -am 'Oh no!\
 
 This spans multiple lines.
 Can our script handle it?
