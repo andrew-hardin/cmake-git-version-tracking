@@ -46,7 +46,8 @@ set +e
 ./demo &> output.txt
 assert "$? -eq 0" $LINENO
 
-# Check that demo reported that there were uncommitted changes.
+# Check that demo didn't report uncommitted changes- we're ignoring
+# the one untracked file.
 set -e
 if grep -q "uncommitted" output.txt; then
     echo "Demo reported a dirty head, but we should have ignored untracked changes."
