@@ -208,9 +208,9 @@ function(GetGitState _working_dir)
             # There was no commit body - set the safe string to empty.
             set(safe "")
         endif()
-        set(ENV{GIT_COMMIT_BODY} "\"${safe}\"")
+        set(ENV{GIT_COMMIT_BODY} "${safe}")
     else()
-        set(ENV{GIT_COMMIT_BODY} "\"\"") # empty string.
+        set(ENV{GIT_COMMIT_BODY} "") # empty string.
     endif()
 
     # Get output of git describe
