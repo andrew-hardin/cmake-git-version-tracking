@@ -7,6 +7,19 @@ capability is baked into single self-contained
 
 # Integration with CMake
 you can use something like CMake's `Fetch_Content` module to use the library `cmake_git_version` directly.
+```
+FetchContent_Declare(git_version                   
+  GIT_REPOSITORY https://github.com/callalilychen/cmake-git-version-tracking.git
+  GIT_TAG v1.0
+)
+FetchContent_MakeAvailable(git_version)
+
+target_link_libraries(${PROJECT_NAME}
+  cmake_git_version
+)
+```
+
+Then you can include [`git.h`](./git.h) to use the provided functions for git version.
 
 ## "The proof of the pudding is in the eating!"
 In other words, please clone the repository and [try out the demo](hello-world/README.md).
