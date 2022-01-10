@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.2)
-project(CMakeGitVersion)
+project(cmake_git_version)
 
 # Define the two required variables before including
 # the source code for watching a git repository.

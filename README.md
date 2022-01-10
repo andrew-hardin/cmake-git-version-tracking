@@ -6,7 +6,7 @@ capability is baked into single self-contained
 [script](git_watcher.cmake).
 
 # Integration with CMake
-you can use something like CMake's `Fetch_Content` module to use the library `CMakeGitVersion` directly.
+you can use something like CMake's `Fetch_Content` module to use the library `cmake_git_version` directly.
 
 ## "The proof of the pudding is in the eating!"
 In other words, please clone the repository and [try out the demo](hello-world/README.md).

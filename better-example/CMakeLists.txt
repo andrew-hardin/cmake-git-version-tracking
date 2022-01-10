@@ -5,4 +5,4 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/.. root)
 
 # Setup a demo executable that links to the git library.
 add_executable(demo main.cc)
-target_link_libraries(demo CMakeGitVersion)
+target_link_libraries(demo cmake_git_version)
