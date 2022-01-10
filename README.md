@@ -6,13 +6,13 @@ capability is baked into single self-contained
 [script](git_watcher.cmake).
 
 # Integration with CMake
-you can use something like CMake's `Fetch_Content` module to use the library `cmake_git_version` directly.
+You can use something like CMake's `Fetch_Content` module to use the library `cmake_git_version` directly.
 ```
-FetchContent_Declare(git_version                   
+FetchContent_Declare(cmake_git_version                   
   GIT_REPOSITORY https://github.com/callalilychen/cmake-git-version-tracking.git
   GIT_TAG v1.0
 )
-FetchContent_MakeAvailable(git_version)
+FetchContent_MakeAvailable(cmake_git_version)
 
 target_link_libraries(${PROJECT_NAME}
   cmake_git_version
