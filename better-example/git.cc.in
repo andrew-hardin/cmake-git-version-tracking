@@ -27,3 +27,6 @@ std::string GitMetadata::CommitBody() {
 std::string GitMetadata::Describe() {
     return "@GIT_DESCRIBE@";
 }
+std::string GitMetadata::Branch() {
+    return "@GIT_BRANCH@"
+}

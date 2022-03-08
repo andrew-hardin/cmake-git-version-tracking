@@ -26,4 +26,6 @@ public:
   static std::string CommitBody();
   // The commit describe.
   static std::string Describe();
+  // The symbolic reference tied to HEAD.
+  static std::string Branch();
 };
