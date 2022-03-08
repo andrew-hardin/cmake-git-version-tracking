@@ -8,7 +8,7 @@ int main() {
         if(GitMetadata::AnyUncommittedChanges()) {
             std::cerr << "WARN: there were uncommitted changes at build-time." << std::endl;
         }
-        std::cout << "commit " << GitMetadata::CommitSHA1() << " (HEAD)\n"
+        std::cout << "commit " << GitMetadata::CommitSHA1() << " (" << GitMetadata::Branch() << ")\n"
                   << "describe " << GitMetadata::Describe() << "\n"
                   << "Author: " << GitMetadata::AuthorName() << " <" << GitMetadata::AuthorEmail() << ">\n"
                   << "Date: " << GitMetadata::CommitDate() << "\n\n"

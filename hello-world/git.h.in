@@ -27,3 +27,6 @@
 
 // The output from git --describe (e.g. the most recent tag)
 #define GIT_DESCRIBE "@GIT_DESCRIBE@"
+
+// The output fr+om git symbolic-ref --short HEAD
+#define GIT_BRANCH "@GIT_BRANCH@"

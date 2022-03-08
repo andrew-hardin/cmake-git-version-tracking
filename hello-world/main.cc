@@ -10,7 +10,7 @@ int main() {
 
         // Print information about the commit.
         // The format imitates the output from "git log".
-        std::cout << "\n\ncommit " << GIT_HEAD_SHA1 << " (HEAD)\n"
+        std::cout << "\n\ncommit " << GIT_HEAD_SHA1 << " (ref: " << GIT_BRANCH << ")\n"
                   << "Describe: " << GIT_DESCRIBE << "\n"
                   << "Author: " << GIT_AUTHOR_NAME << " <" << GIT_AUTHOR_EMAIL << ">\n"
                   << "Date: " << GIT_COMMIT_DATE_ISO8601 << "\n\n"
