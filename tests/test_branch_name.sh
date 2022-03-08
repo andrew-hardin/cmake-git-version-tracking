@@ -45,9 +45,7 @@ git checkout HEAD~1
 # Verify that we show HEAD when there isn't a symbolic ref.
 cd $build
 cmake --build . --target demo
-echo "TICK"
 ./demo &> output.txt
-echo "TOCK"
 if ! grep -q HEAD output.txt; then
     echo "We didn't output HEAD as the branch name."
     assert "1 -eq 0" $LINENO
