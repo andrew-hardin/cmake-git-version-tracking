@@ -30,3 +30,6 @@ std::string GitMetadata::Describe() {
 std::string GitMetadata::Branch() {
     return "@GIT_BRANCH@";
 }
+std::string GitMetadata::Tag() {
+    return "@GIT_TAG@";
+}

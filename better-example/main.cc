@@ -10,6 +10,7 @@ int main() {
         }
         std::cout << "commit " << GitMetadata::CommitSHA1() << " (" << GitMetadata::Branch() << ")\n"
                   << "describe " << GitMetadata::Describe() << "\n"
+                  << "tag " << GitMetadata::Tag() << "\n"
                   << "Author: " << GitMetadata::AuthorName() << " <" << GitMetadata::AuthorEmail() << ">\n"
                   << "Date: " << GitMetadata::CommitDate() << "\n\n"
                   << GitMetadata::CommitSubject() << "\n" << GitMetadata::CommitBody() << std::endl;
