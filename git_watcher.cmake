@@ -105,6 +105,10 @@ set(_state_variable_names
     GIT_COMMIT_BODY
     GIT_DESCRIBE
     GIT_BRANCH
+    GIT_TAG
+    WHOAMI
+    HOSTNAME
+    UNAME
     # >>>
     # 1. Add the name of the additional git variable you're interested in monitoring
     #    to this list.
@@ -141,7 +145,18 @@ macro(RunGitCommand)
     endif()
 endmacro()
 
-
+# Macro: RunNormalCommand
+# Description: short-hand macro for calling any command function. Outputs are the
+#              "exit_code" and "output" variables.
+macro(RunNormalCommand)
+    execute_process(COMMAND
+            ${ARGV}
+            WORKING_DIRECTORY "${_working_dir}"
+            RESULT_VARIABLE exit_code
+            OUTPUT_VARIABLE output
+            ERROR_VARIABLE stderr
+            OUTPUT_STRIP_TRAILING_WHITESPACE)
+endmacro()
 
 # Function: GetGitState
 # Description: gets the current state of the git repo.
@@ -240,6 +255,36 @@ function(GetGitState _working_dir)
         set(ENV{GIT_BRANCH} "${object}")
     else()
         set(ENV{GIT_BRANCH} "${output}")
+    endif()
+
+    set(_permit_git_failure ON)
+    RunGitCommand(describe --tags --dirty)
+    unset(_permit_git_failure)
+    if(exit_code EQUAL 0)
+        set(ENV{GIT_TAG} "${output}")
+    else()
+        set(ENV{GIT_TAG} "") # empty string.
+    endif()
+
+    RunNormalCommand(whoami)
+    if(exit_code EQUAL 0)
+        set(ENV{WHOAMI} "${output}")
+    else()
+        set(ENV{WHOAMI} "") # empty string.
+    endif()
+
+    RunNormalCommand(hostname -f)
+    if(exit_code EQUAL 0)
+        set(ENV{HOSTNAME} "${output}")
+    else()
+        set(ENV{HOSTNAME} "") # empty string.
+    endif()
+
+    RunNormalCommand(uname -ar)
+    if(exit_code EQUAL 0)
+        set(ENV{UNAME} "${output}")
+    else()
+        set(ENV{UNAME} "") # empty string.
     endif()
 
     # >>>

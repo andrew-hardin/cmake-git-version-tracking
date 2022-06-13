@@ -30,3 +30,16 @@ std::string GitMetadata::Describe() {
 std::string GitMetadata::Branch() {
     return "@GIT_BRANCH@";
 }
+std::string GitMetadata::Tag() {
+    return "@GIT_TAG@";
+}
+std::string GitMetadata::Whoami() {
+    return "@WHOAMI@";
+}
+std::string GitMetadata::Hostname() {
+    return "@HOSTNAME@";
+}
+std::string GitMetadata::Uname() {
+    return "@UNAME@";
+}
+

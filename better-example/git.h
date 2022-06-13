@@ -28,4 +28,12 @@ public:
   static std::string Describe();
   // The symbolic reference tied to HEAD.
   static std::string Branch();
+  // The most recent tag
+  static std::string Tag();
+  // The user
+  static std::string Whoami();
+  // The host machine name
+  static std::string Hostname();
+  // The kernel name
+  static std::string Uname();
 };
