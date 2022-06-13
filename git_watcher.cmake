@@ -258,7 +258,7 @@ function(GetGitState _working_dir)
     endif()
 
     set(_permit_git_failure ON)
-    RunGitCommand(describe --tags --dirty ${object})
+    RunGitCommand(describe --tags --dirty)
     unset(_permit_git_failure)
     if(exit_code EQUAL 0)
         set(ENV{GIT_TAG} "${output}")
