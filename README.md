@@ -1,12 +1,11 @@
 [![Regression Tests](https://github.com/andrew-hardin/cmake-git-version-tracking/actions/workflows/main.yml/badge.svg)](https://github.com/andrew-hardin/cmake-git-version-tracking/actions/workflows/main.yml)
 # Embed Git metadata in C/C++ project
-This is a demo project that shows how to embed up-to-date
-git metadata in a C/C++ project via CMake. The entire
-capability is baked into single self-contained
+This project embeds up-to-date git metadata in a standalone C/C++ compatible static library via CMake.
+The core capability is baked into single self-contained
 [script](git_watcher.cmake).
 
-## Quickstart via CMake Fetch_Content
-You can use something like CMake's `Fetch_Content` module to use the library `cmake_git_version_tracking` directly:
+## Quickstart via CMake FetchContent
+You can use CMake's `FetchContent` module to build the static library `cmake_git_version_tracking`:
 ```
 FetchContent_Declare(cmake_git_version_tracking                   
   GIT_REPOSITORY https://github.com/andrew-hardin/cmake-git-version-tracking.git
@@ -19,9 +18,6 @@ target_link_libraries(${PROJECT_NAME}
 )
 ```
 Then include [`git.h`](./git.h) to use the provided functions for git version.
-
-## "The proof of the pudding is in the eating!"
-In other words, please clone the repository and [try out the demo](hello-world/README.md).
 
 ## A "why does this matter" use case
 We're continuously shipping prebuilt binaries for an
@@ -57,12 +53,3 @@ We check Git every time a build is started (e.g. `make`) to see if anything has 
 like a new commit to the current branch. If nothing has changed, then we don't
 touch anything- _no recompiling or linking is triggered_. If something has changed, then we
 reconfigure the header and CMake rebuilds any downstream dependencies.
-
-## Tip: how to avoid unnecessary recompilations
-If you're worried about lengthy recompilations, then **don't** place the
-versioning information in a header that is then included in _every_ source
-file. Doing so would defeat the purpose of partial rebuilds.
-
-The [better example](better-example/README.md) demonstrates one approach
-for solving the partial recompilation problem by moving the git metadata
-from a header into a source file.

@@ -6,14 +6,8 @@
 #  That wouldn't make a good first impression...
 set -e
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-cd $DIR/../hello-world
-mkdir build
-cd build
-cmake ..
-make
-./demo
 
-cd $DIR/../better-example
+cd $DIR/../hello-world
 mkdir build
 cd build
 cmake ..
