@@ -5,21 +5,20 @@ git metadata in a C/C++ project via CMake. The entire
 capability is baked into single self-contained
 [script](git_watcher.cmake).
 
-# Integration with CMake
-You can use something like CMake's `Fetch_Content` module to use the library `cmake_git_version` directly.
+## Quickstart via CMake Fetch_Content
+You can use something like CMake's `Fetch_Content` module to use the library `cmake_git_version_tracking` directly:
 ```
-FetchContent_Declare(cmake_git_version                   
-  GIT_REPOSITORY https://github.com/callalilychen/cmake-git-version-tracking.git
-  GIT_TAG v1.0
+FetchContent_Declare(cmake_git_version_tracking                   
+  GIT_REPOSITORY https://github.com/andrew-hardin/cmake-git-version-tracking.git
+  GIT_TAG TODO
 )
-FetchContent_MakeAvailable(cmake_git_version)
+FetchContent_MakeAvailable(cmake_git_version_tracking)
 
 target_link_libraries(${PROJECT_NAME}
-  cmake_git_version
+  cmake_git_version_tracking
 )
 ```
-
-Then you can include [`git.h`](./git.h) to use the provided functions for git version.
+Then include [`git.h`](./git.h) to use the provided functions for git version.
 
 ## "The proof of the pudding is in the eating!"
 In other words, please clone the repository and [try out the demo](hello-world/README.md).

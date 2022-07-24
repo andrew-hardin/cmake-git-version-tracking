@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.2)
-project(cmake_git_version)
+project(cmake_git_version_tracking)
 
 # Define the two required variables before including
 # the source code for watching a git repository.
