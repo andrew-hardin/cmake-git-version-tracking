@@ -11,13 +11,14 @@ source $DIR/util.sh
 set -e
 cd $src
 git init
+touch README.md
 git add .
 git commit -am "Initial commit."
 
 # Build the project
 set -e
 cd $build
-cmake -G "$TEST_GENERATOR" $src
+cmake -G "$TEST_GENERATOR" $src $version_tracking_module
 cmake --build . --target demo
 
 # Run the demo.

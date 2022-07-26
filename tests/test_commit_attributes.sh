@@ -17,7 +17,7 @@ git commit --author="Author Name <author@address.com>" -am "Initial commit." -m 
 # Build the project
 set -e
 cd $build
-cmake -G "$TEST_GENERATOR" $src
+cmake -G "$TEST_GENERATOR" $src $version_tracking_module
 cmake --build . --target demo
 
 # Run the demo.

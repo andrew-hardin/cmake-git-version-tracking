@@ -18,8 +18,8 @@ git checkout -b true-branch-name
 # Build the project
 set -e
 cd $build
-cmake -G "$TEST_GENERATOR" $src -DGIT_FAIL_IF_NONZERO_EXIT=FALSE
-cmake --build . --target demo
+cmake -G "$TEST_GENERATOR" $src $version_tracking_module -DGIT_FAIL_IF_NONZERO_EXIT=FALSE
+cmake --build . --target demo 
 
 # Run the demo.
 # It should report EXIT_SUCCESS because git history was found.
