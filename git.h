@@ -68,7 +68,7 @@ GIT_VERSION_TRACKING_EXTERN_C_END
 
 // We really want to use std::string_view if it appears
 // that the compiler will support it. If that fails,
-/// revert back to std::string.
+// revert back to std::string.
 #define GIT_VERSION_TRACKING_CPP_17_STANDARD 201703L
 #if __cplusplus >= GIT_VERSION_TRACKING_CPP_17_STANDARD
 #define GIT_VERSION_USE_STRING_VIEW 1
