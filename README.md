@@ -5,6 +5,11 @@ It's written responsibly to only trigger rebuilds if git metadata changes (e.g. 
 The core capability is baked into single self-contained
 [script](git_watcher.cmake).
 
+## Requirements
+- CMake >= 3.2
+- C Compiler (with C99 standard support)
+- Git
+
 ## Quickstart via FetchContent
 You can use CMake's `FetchContent` module to build the static library `cmake_git_version_tracking`:
 ```

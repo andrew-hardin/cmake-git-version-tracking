@@ -15,6 +15,7 @@
 #define GIT_VERSION_TRACKING_EXTERN_C_END
 #endif
 
+// Don't mangle the C function names if included in a CXX file.
 GIT_VERSION_TRACKING_EXTERN_C_BEGIN
 
 /// Is the metadata populated? 
@@ -57,9 +58,9 @@ GIT_VERSION_TRACKING_EXTERN_C_END
 
 #ifdef __cplusplus
 
-/// This is a utility extension for C++ units.
+/// This is a utility extension for C++ projects.
 /// It provides a "git" namespace that wraps the
-/// C methods in more ergonomic types.
+/// C methods in more(?) ergonomic types.
 ///
 /// This is header-only in an effort to keep the
 /// underlying static library C99 compliant.
