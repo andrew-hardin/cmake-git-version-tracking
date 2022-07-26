@@ -89,7 +89,7 @@ namespace git {
 #if GIT_VERSION_USE_STRING_VIEW
 using StringOrView = std::string_view;
 #else
-using StringOrView = std::string;
+typedef std::string StringOrView;
 #endif
 
 namespace internal {

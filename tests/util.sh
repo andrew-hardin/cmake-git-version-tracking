@@ -10,6 +10,7 @@ source $DIR/assert.sh
 #  https://unix.stackexchange.com/questions/30091/fix-or-alternative-for-mktemp-in-os-x
 create_temp_directory=`mktemp -d 2>/dev/null || mktemp -d -t 'mytmpdir'`
 demo_src=$DIR/hello-world
+interface_src=$DIR/interfaces
 version_tracking_module="-DVERSION_TRACKING_MODULE_PATH=$DIR/.."
 git_watcher=$DIR/../git_watcher.cmake
 
