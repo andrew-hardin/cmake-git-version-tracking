@@ -39,8 +39,13 @@ Dirty: false (there were no uncommitted changes at time of build)
 This allows you to investigate the _precise_ version of the
 application that the bug was reported in.
 
-## Q: doesn't this already exist?
-**A:** it depends on your specific requirements. Before writing this, I
+## Q: What if I want to track `$special_git_field`?
+Fork the project and modify [git_watcher.cmake](git_watcher.cmake)
+to track new additional fields (e.g. kernel version or build hostname.
+Sections that need to be modified are marked with `>>>`.
+
+## Q: Doesn't this already exist?
+It depends on your specific requirements. Before writing this, I
 searched far and wide for existing solutions. Each solution I found fell
 into one of two categories:
 
@@ -54,8 +59,8 @@ into one of two categories:
   any object file that includes the new header will be recompiled -- _even if the state
   of the git repo hasn't changed_.
 
-## Q: what's the ideal efficient solution?
-**A:** We check Git every time a build is started (e.g. `make`) to see if anything has changed,
+## Q: What's the efficient and accurate solution?
+We check Git every time a build is started (e.g. `make`) to see if anything has changed,
 like a new commit to the current branch. If nothing has changed, then we don't
 touch anything- _no recompiling or linking is triggered_. If something has changed, then we
 reconfigure the header and CMake rebuilds any downstream dependencies.
