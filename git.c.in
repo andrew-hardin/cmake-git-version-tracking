@@ -1,6 +1,6 @@
 #include "git.h"
 
-bool git_Populated() {
+bool git_IsPopulated() {
     return @GIT_RETRIEVED_STATE@;
 }
 bool git_AnyUncommittedChanges() {

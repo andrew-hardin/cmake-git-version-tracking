@@ -7,6 +7,16 @@
 
 #include <stdbool.h>
 
+#ifdef __cplusplus
+#define GIT_VERSION_TRACKING_EXTERN_C_BEGIN extern "C" {
+#define GIT_VERSION_TRACKING_EXTERN_C_END }
+#else
+#define GIT_VERSION_TRACKING_EXTERN_C_BEGIN
+#define GIT_VERSION_TRACKING_EXTERN_C_END
+#endif
+
+GIT_VERSION_TRACKING_EXTERN_C_BEGIN
+
 /// Is the metadata populated? 
 //
 /// We may not have metadata if there wasn't a .git directory
@@ -41,6 +51,9 @@ const char* git_Describe();
 /// The symbolic reference tied to HEAD.
 const char* git_Branch();
 
+GIT_VERSION_TRACKING_EXTERN_C_END
+#undef GIT_VERSION_TRACKING_EXTERN_C_BEGIN
+#undef GIT_VERSION_TRACKING_EXTERN_C_END
 
 #ifdef __cplusplus
 
