@@ -1,10 +1,11 @@
 [![Regression Tests](https://github.com/andrew-hardin/cmake-git-version-tracking/actions/workflows/main.yml/badge.svg)](https://github.com/andrew-hardin/cmake-git-version-tracking/actions/workflows/main.yml)
-# Embed Git metadata in C/C++ project
-This project embeds up-to-date git metadata in a standalone C/C++ compatible static library via CMake.
+# Embed Git metadata in C/C++ projects via CMake
+This project embeds up-to-date git metadata in a standalone C/C++ static library via CMake.
+It's written responsibly to only trigger rebuilds if git metadata changes (e.g. a new commit is added).
 The core capability is baked into single self-contained
 [script](git_watcher.cmake).
 
-## Quickstart via CMake FetchContent
+## Quickstart via FetchContent
 You can use CMake's `FetchContent` module to build the static library `cmake_git_version_tracking`:
 ```
 FetchContent_Declare(cmake_git_version_tracking                   
@@ -13,14 +14,14 @@ FetchContent_Declare(cmake_git_version_tracking
 )
 FetchContent_MakeAvailable(cmake_git_version_tracking)
 
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(your_target
   cmake_git_version_tracking
 )
 ```
-Then include [`git.h`](./git.h) to use the provided functions for git version.
+Then [`#include git.h`](./git.h) and use the provided functions to retrieve git metadata.
 
-## A "why does this matter" use case
-We're continuously shipping prebuilt binaries for an
+## Intended use case
+You're continuously shipping prebuilt binaries for an
 application. A user discovers a bug and files a bug report.
 By embedding up-to-date versioning information, the user
 can include this in their report, e.g.:
@@ -30,11 +31,11 @@ Commit SHA1: 46a396e (46a396e6c1eb3d)
 Dirty: false (there were no uncommitted changes at time of build)
 ```
 
-This allows us to investigate the _precise_ version of the
+This allows you to investigate the _precise_ version of the
 application that the bug was reported in.
 
-## Wait, doesn't this already exist?
-Well, it depends on your specific requirements. Before writing this, I
+## Q: doesn't this already exist?
+**A:** it depends on your specific requirements. Before writing this, I
 searched far and wide for existing solutions. Each solution I found fell
 into one of two categories:
 
@@ -48,8 +49,8 @@ into one of two categories:
   any object file that includes the new header will be recompiled -- _even if the state
   of the git repo hasn't changed_.
 
-## So what's the ideal solution?
-We check Git every time a build is started (e.g. `make`) to see if anything has changed,
+## Q: what's the ideal efficient solution?
+**A:** We check Git every time a build is started (e.g. `make`) to see if anything has changed,
 like a new commit to the current branch. If nothing has changed, then we don't
 touch anything- _no recompiling or linking is triggered_. If something has changed, then we
 reconfigure the header and CMake rebuilds any downstream dependencies.
