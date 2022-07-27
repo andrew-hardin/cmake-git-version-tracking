@@ -18,7 +18,7 @@ git commit -am "Initial commit."
 # Build the project
 set -e
 cd $build
-cmake -G "$TEST_GENERATOR" $src
+cmake -G "$TEST_GENERATOR" $src $version_tracking_module
 cmake --build . --target demo
 
 # Run the demo.
@@ -34,7 +34,7 @@ fi
 
 # Watch the git-state file and make sure it doesn't change
 # when we try to rebuild the project.
-state_file="$build/git-state-hash"
+state_file=$build/_deps/cmake_git_version_tracking-build/git-state-hash
 demo_file="$build/demo"
 last_touched_state="$(stat -c %y $state_file)"
 last_touched_exe="$(stat -c %y $demo_file)"

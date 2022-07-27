@@ -1,6 +1,0 @@
-# The demo creates the configured header in the source directory.
-# Not great in practice, but good enough for a simple demo.
-git.h
-
-# Just in case someone follows the demo instructions.
-build

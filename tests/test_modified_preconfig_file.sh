@@ -22,18 +22,20 @@ echo "hello world" > dirty
 # Configure and build the project.
 set -e
 cd $build
-cmake -G "$TEST_GENERATOR" $src
+cmake -G "$TEST_GENERATOR" $src $version_tracking_module
 cmake --build . --target demo
 
 # Record the date on the post-configure file, then
 # modify the pre-configure file.
-before=$(stat -c %y $src/git.h)
-echo "// this is a modification" >> "$src/git.h.in"
+file_to_check=./_deps/cmake_git_version_tracking-build/git.c
+file_to_modify=./_deps/cmake_git_version_tracking-src/git.c.in
+before=$(stat -c %y $file_to_check)
+echo "// this is a modification" >> "$file_to_modify"
 
 # Make the project again. Verify that it regenerated
 # our git file.
 cmake --build . --target demo
-after=$(stat -c %y $src/git.h)
+after=$(stat -c %y $file_to_check)
 
 # Modified stamps need to be different.
 if [ "$before" == "$after" ]; then

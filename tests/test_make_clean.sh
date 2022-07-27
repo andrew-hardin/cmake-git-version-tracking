@@ -36,21 +36,23 @@ git commit -am "Initial commit."
 # Build the project
 set -e
 cd $build
-cmake -G "$TEST_GENERATOR" $src
+cmake -G "$TEST_GENERATOR" $src $version_tracking_module
 cmake --build . --target demo
 
-# The configured header should exist.
+# The configured source file should exist.
 # The git-state file should exist.
-assert "-f $src/git.h" $LINENO
-assert "-f $build/git-state-hash" $LINENO
+configured_src=./_deps/cmake_git_version_tracking-build/git.c
+git_state=./_deps/cmake_git_version_tracking-build/git-state-hash
+assert "-f $configured_src" $LINENO
+assert "-f $git_state" $LINENO
 
 # Make followed by clean should scrub both these files.
 cmake --build .
 cmake --build . --target clean
-assert "! -f $src/git.h" $LINENO
-assert "! -f $build/git-state-hash" $LINENO
+assert "! -f $configured_src" $LINENO
+assert "! -f $git_state" $LINENO
 
 # We should generate them again after calling make.
 cmake --build .
-assert "-f $src/git.h" $LINENO
-assert "-f $build/git-state-hash" $LINENO
+assert "-f $configured_src" $LINENO
+assert "-f $git_state" $LINENO
