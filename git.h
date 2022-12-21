@@ -95,7 +95,7 @@ typedef std::string StringOrView;
 namespace internal {
 
 /// Short-hand method for initializing a std::string or std::string_view given a C-style const char*.
-const StringOrView InitString(const char* from_c_interface) {
+inline const StringOrView InitString(const char* from_c_interface) {
   #if GIT_VERSION_USE_STRING_VIEW
     return StringOrView { from_c_interface, std::strlen(from_c_interface) };
   #else
