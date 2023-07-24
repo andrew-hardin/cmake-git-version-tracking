@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.2...3.27)
 project(cmake_git_version_tracking
     LANGUAGES C)
 
