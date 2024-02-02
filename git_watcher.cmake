@@ -97,6 +97,8 @@ CHECK_REQUIRED_VARIABLE(GIT_EXECUTABLE)
 set(_state_variable_names
     GIT_RETRIEVED_STATE
     GIT_HEAD_SHA1
+    GIT_HEAD_SHA1_32
+    GIT_HEAD_SHA1_64
     GIT_IS_DIRTY
     GIT_AUTHOR_NAME
     GIT_AUTHOR_EMAIL
@@ -176,6 +178,10 @@ function(GetGitState _working_dir)
     if(exit_code EQUAL 0)
         set(ENV{GIT_HEAD_SHA1} ${output})
     endif()
+    string(SUBSTRING ${output} 0 16 output)
+    set(ENV{GIT_HEAD_SHA1_64} ${output})
+    string(SUBSTRING ${output} 0 8 output)
+    set(ENV{GIT_HEAD_SHA1_32} ${output})
 
     RunGitCommand(show -s "--format=%an" ${object})
     if(exit_code EQUAL 0)
