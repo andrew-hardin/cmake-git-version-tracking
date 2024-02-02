@@ -15,6 +15,12 @@ const char* git_AuthorEmail() {
 const char* git_CommitSHA1() {
     return "@GIT_HEAD_SHA1@";
 }
+uint32_t git_CommitSHA1_32(){
+    return 0x@GIT_HEAD_SHA1_32@U;
+}
+uint64_t git_CommitSHA1_64(){
+    return 0x@GIT_HEAD_SHA1_64@U;
+}
 const char* git_CommitDate() {
     return "@GIT_COMMIT_DATE_ISO8601@";
 }

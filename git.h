@@ -6,6 +6,7 @@
 // https://raw.githubusercontent.com/andrew-hardin/cmake-git-version-tracking/master/LICENSE
 
 #include <stdbool.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 #define GIT_VERSION_TRACKING_EXTERN_C_BEGIN extern "C" {
@@ -36,6 +37,12 @@ const char* git_AuthorEmail();
 
 /// The commit SHA1.
 const char* git_CommitSHA1();
+
+/// Commit SHA1 shortened to 32 bits (eight characters)
+uint32_t git_CommitSHA1_32();
+
+/// Commit SHA1 shortened to 64 bits (sixteen characters)
+uint64_t git_CommitSHA1_64();
 
 /// The ISO8601 commit date.
 const char* git_CommitDate();
@@ -122,6 +129,12 @@ inline const StringOrView AuthorEmail() {
 inline const StringOrView CommitSHA1() {
   static const StringOrView kValue = internal::InitString(git_CommitSHA1());
   return kValue;
+}
+inline const uint32_t CommitSHA1_32() {
+    return git_CommitSHA1_32();
+}
+inline const uint64_t CommitSHA1_64() {
+    return git_CommitSHA1_64();
 }
 inline const StringOrView CommitDate() {
   static const StringOrView kValue = internal::InitString(git_CommitDate());
