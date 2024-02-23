@@ -13,6 +13,7 @@ The core capability is baked into single self-contained
 ## Quickstart via FetchContent
 You can use CMake's `FetchContent` module to build the static library `cmake_git_version_tracking`:
 ```cmake
+include(FetchContent)
 FetchContent_Declare(cmake_git_version_tracking                   
   GIT_REPOSITORY https://github.com/andrew-hardin/cmake-git-version-tracking.git
   GIT_TAG 904dbda1336ba4b9a1415a68d5f203f576b696bb
