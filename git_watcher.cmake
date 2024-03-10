@@ -52,6 +52,8 @@
 #   commit was made. There are two sections you need to modify,
 #   and they're tagged with a ">>>" header.
 
+set(GIT_WATCHER_OUTPUT_PATH "${CMAKE_CURRENT_BINARY_DIR}/output.cmake" CACHE INTERNAL "")
+
 # Short hand for converting paths to absolute.
 macro(PATH_TO_ABSOLUTE var_name)
     get_filename_component(${var_name} "${${var_name}}" ABSOLUTE)
@@ -256,9 +258,12 @@ endfunction()
 # Description: this function is executed when the state of the git
 #              repository changes (e.g. a commit is made).
 function(GitStateChangedAction)
+    set(OUTPUT_FILE "")
     foreach(var_name ${_state_variable_names})
         set(${var_name} $ENV{${var_name}})
+        string(APPEND OUTPUT_FILE "set(${var_name} ${${var_name}} CACHE INTERNAL \"\")\n")
     endforeach()
+    file(WRITE "${GIT_WATCHER_OUTPUT_PATH}" "${OUTPUT_FILE}")
     configure_file("${PRE_CONFIGURE_FILE}" "${POST_CONFIGURE_FILE}" @ONLY)
 endfunction()
 
